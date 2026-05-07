@@ -23,7 +23,7 @@ const projects = [
     title: "Nich - Latexfauna",
     year: "2025",
     role: "lead compositor",
-    desc: "annual reel. commercial and film work — crowd simulations, sky replacements, cg integration.",
+    desc: "gausian splatts",
     thumb: "thumbs/nich.jpg",
     vimeo: "https://vimeo.com/123456789",
     priority: 1
