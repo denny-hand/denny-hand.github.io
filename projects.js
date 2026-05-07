@@ -15,10 +15,10 @@
 
 const projects = [
   {
-    title: "showreel 2024",
-    year: "2024",
+    title: "Nich - Latexfauna",
+    year: "2025",
     role: "lead compositor",
-    desc: "annual reel. commercial and film work — crowd simulations, sky replacements, cg integration.",
+    desc: "gausian splatts",
     thumb: "thumbs/nich.jpg",
     preview: "thumbs/brakedown_V025.webm",
     video: "https://www.youtube.com/watch?v=04qpTNRC5-0",
