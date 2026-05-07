@@ -21,7 +21,6 @@ const projects = [
     desc: "gausian splatts",
     thumb: "thumbs/nich.jpg",
     preview: "thumbs/brakedown_V025.webm",
-    video: "https://www.youtube.com/watch?v=04qpTNRC5-0",
     breakdown: "thumbs/brakedown_V025.webm",
     priority: 1
   },
