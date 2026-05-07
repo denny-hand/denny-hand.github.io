@@ -25,9 +25,9 @@ const projects = [
     studio: "Blacksmith VFX",
     desc: "annual reel. commercial and film work — crowd simulations, sky replacements, cg integration.",
     details: "A collection of compositing work from 2024 spanning commercial and narrative projects. Tools used: Nuke, Houdini, DaVinci Resolve. Includes crowd simulations for a large-scale live event broadcast, sky replacements across a 3-week commercial shoot, and CG vehicle integration for an automotive campaign.",
-    thumb: "thumbs/showreel-2024.jpg",
-    preview: "thumbs/showreel-2024.webm",
-    video: "https://vimeo.com/123456789",
+    thumb: "thumbs/nich.jpg",
+    preview: "brakedown_V025.webm",
+    video: "brakedown_V025.webm",
     priority: 1
   },
   {
@@ -38,7 +38,7 @@ const projects = [
     studio: "Studio Name",
     desc: "short description for the card. keep it brief.",
     details: "",
-    thumb: "thumbs/project-name.jpg",
-    video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    thumb: "thumbs/2025-04-20 15-04-21.png",
+    video: "brakedown_V025.webm"
   }
 ];
