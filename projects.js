@@ -41,8 +41,8 @@ const projects = [
     studio: "Studio Name",
     desc: "short description for the card. keep it brief.",
     details: "",
-    ratio: "4/3",
-    thumb: "thumbs/project-name.jpg",
+    ratio: "9/16",
+    thumb: "thumbs/2025-04-20 15-04-21.png",
     video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   }
 ];
