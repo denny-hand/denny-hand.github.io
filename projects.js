@@ -25,7 +25,7 @@ const projects = [
     role: "lead compositor",
     desc: "gausian splatts",
     thumb: "thumbs/nich.jpg",
-    vimeo: "https://vimeo.com/123456789",
+    youtube: "https://www.youtube.com/watch?v=04qpTNRC5-0",
     priority: 1
   },
   {
