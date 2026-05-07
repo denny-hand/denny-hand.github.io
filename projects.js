@@ -21,8 +21,8 @@ const projects = [
     desc: "annual reel. commercial and film work — crowd simulations, sky replacements, cg integration.",
     thumb: "thumbs/nich.jpg",
     preview: "thumbs/brakedown_V025.webm",
-    video: "https://vimeo.com/123456789",
-    breakdown: "https://vimeo.com/123456780",
+    video: "https://www.youtube.com/watch?v=04qpTNRC5-0",
+    breakdown: "thumbs/brakedown_V025.webm",
     priority: 1
   },
   {
