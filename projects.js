@@ -25,7 +25,6 @@ const projects = [
     year: "2024",
     role: "lead compositor",
     desc: "annual reel. commercial and film work — crowd simulations, sky replacements, cg integration.",
-    thumb: "thumbs/showreel-2024.jpg",
     preview: "brakedown_V025.webm",
     vimeo: "https://vimeo.com/123456789",
     priority: 1
