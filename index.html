@@ -481,21 +481,23 @@ function renderGrid(projects) {
       (function(c) {
         var v = c.querySelector("video");
         var bar = c.querySelector(".scrub-progress");
-        var seeking = false;
+        var rafId = null;
         var pendingPct = null;
+        function doSeek() {
+          rafId = null;
+          if (!v.duration || pendingPct === null) return;
+          if (v.fastSeek) v.fastSeek(pendingPct * v.duration);
+          else v.currentTime = pendingPct * v.duration;
+          pendingPct = null;
+        }
         function scrubTo(clientX) {
           var rect = c.getBoundingClientRect();
           var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
           bar.style.width = (pct * 100) + "%";
-          if (!v.duration) return;
-          if (!seeking) { seeking = true; pendingPct = null; v.currentTime = pct * v.duration; }
-          else { pendingPct = pct; }
+          pendingPct = pct;
+          if (!rafId) rafId = requestAnimationFrame(doSeek);
         }
-        function scrubReset() { v.pause(); v.currentTime = 0; bar.style.width = "0%"; seeking = false; pendingPct = null; }
-        v.addEventListener("seeked", function() {
-          if (pendingPct !== null && v.duration) { v.currentTime = pendingPct * v.duration; pendingPct = null; }
-          else { seeking = false; }
-        });
+        function scrubReset() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } pendingPct = null; v.pause(); v.currentTime = 0; bar.style.width = "0%"; }
         c.addEventListener("mouseenter", function() { v.pause(); });
         c.addEventListener("mousemove", function(e) { scrubTo(e.clientX); });
         c.addEventListener("mouseleave", scrubReset);
