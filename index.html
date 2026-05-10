@@ -118,7 +118,7 @@
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 12px; }
 
   /* card */
-  .card { display: block; text-decoration: none; color: inherit; border-radius: 6px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: var(--thumb); cursor: pointer; width: 100%; min-width: 0; opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.25s ease; }
+  .card { display: block; text-decoration: none; color: inherit; border-radius: 6px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: var(--thumb); cursor: pointer; width: 100%; min-width: 0; opacity: 0; transform: translateY(10px); transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
   .card.visible { opacity: 1; transform: translateY(0); }
   .card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.18); transform: translateY(-3px); }
   .card img, .card video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
@@ -484,7 +484,7 @@ function renderGrid(projects) {
     if (p.link) { card.addEventListener("click", function() { window.open(p.link,"_blank","noopener"); }); }
     else if (p.video) { (function(p){ card.addEventListener("click", function(){ openModal(p); }); })(p); }
     grid.appendChild(card);
-    setTimeout(function() { card.classList.add("visible"); }, 80 + i * 100);
+    setTimeout(function() { card.classList.add("visible"); }, 30 + i * 40);
   });
 }
 
