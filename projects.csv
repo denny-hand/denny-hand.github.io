@@ -24,18 +24,18 @@
 # priority  — число 1/2/3 фиксирует позицию. Если пусто — сортировка по date/year,,,,,,,,,,,,,,
 # ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,
 title,year,date,role,studio,category,featured,desc,details,thumb,preview,video,breakdown,link,priority
-Erik Stoneheart,2021,2021-06,Compositing Artist,Snow Dog,feature film,,best of 2024. compositing work across commercial and film projects.,,thumbs/erik_1k.jpg,,,,https://www.imdb.com/title/tt20247118/,1
-Kremin,2021,2021-07,Compositing Artist,Snow Dog,commercial,,"short description of the project. what you did, what was interesting.",Long description of the project. Write as much as you want here.,thumbs/kremin_1k.jpg,,,thumbs/breakdown-one.webm,https://shorturl.at/zdXR8,2
-Mission Sky,2021,2021-08,Compositing Artist,Snow Dog,music video,,short description of the project. keep it brief and specific.,,thumbs/nebo1_1k.jpg,,,,https://www.imdb.com/title/tt15815090/,
-Mavka: The Forest Song  ,2023,2023-03,Compositing Artist,Animagrad,animation,,short description of the project. one or two sentences maximum.,,thumbs/mavka_1k.jpg,,,,,
+Erik Stoneheart,2021,2021-06,Compositing Artist,Snow Dog,feature film,,best of 2024. compositing work across commercial and film projects.,,thumbs/erik_1k.jpg,,,,https://www.imdb.com/title/tt20247118/,
+Kremin,2021,2021-07,Compositing Artist,Snow Dog,feature film,,"short description of the project. what you did, what was interesting.",Long description of the project. Write as much as you want here.,thumbs/kremin_1k.jpg,,,thumbs/breakdown-one.webm,https://shorturl.at/zdXR8,
+Mission Sky,2021,2021-08,Compositing Artist,Snow Dog,feature film,,short description of the project. keep it brief and specific.,,thumbs/nebo1_1k.jpg,,,,https://www.imdb.com/title/tt15815090/,
+Mavka: The Forest Song  ,2023,2023-03,Compositing Artist,Animagrad,animation,,short description of the project. one or two sentences maximum.,,thumbs/mavka_1k.jpg,,,,,2
 Noa Kirel – Unicorn,2023,2023-04,Compositing Artist,Raconteur,music video,,,,thumbs/unicorn_1k.jpg,,,,,
-The Dragon Prince: Season 5,2023,2023-05,LRC,Bardel Animation ,animation,,,,thumbs/dragon_1k.jpg,,,,,
-Sausage Party: Foodtopia,2023,2023-08,Lighting Lead,Bardel Animation ,animation,,,,thumbs/foodtopia_1k.jpg,,,,,
+The Dragon Prince: Season 5,2023,2023-05,LRC,Bardel Animation ,animation,,,,thumbs/dragon_1k.jpg,,,,,1
+Sausage Party: Foodtopia,2023,2023-08,Lighting Lead,Bardel Animation ,animation,,,,thumbs/foodtopia_1k.jpg,,,,,3
 Eden Golan - Hurricane,2024,2024-04,Compositing Artist,Raconteur,music video,,,,thumbs/huraccane_1k.jpg,,,,,
 Within Temptation – A fool’s parade,2024,2024-05,Compositing Artist,Raconteur,music video,,,,thumbs/within_1k.jpg,,,,,
 Noga Erez - PC People ft. ROUSSO,2024,2024-06,Compositing Artist,Raconteur,music video,,,,thumbs/noga_1k.jpg,,,,,
 Dorofeeva – Kolyskova,2024,2024-08,Compositing Artist,Raconteur,music video,,,,thumbs/kolyskova_1k.jpg,,,,,
-Nasha Faita - Trailer (2024),2024,2024-09,Comp Lead,Animagrad,feature film,,,,thumbs/faita_1k.jpg,,,,,
+Nasha Faita - Trailer (2024),2024,2024-09,Comp Lead,Animagrad,2d animation,,,,thumbs/faita_1k.jpg,,,,,
 Roshen Commercial Lacmi 2024,2024,2024-10,Compositing Artist,M1X,commercial,,,,thumbs/lacmi_1k.jpg,,,,,
 Robocats Commercial 2024,2025,2025-01,Compositing Artist,Animagrad,commercial,,,,thumbs/robocats_1k.jpg,,,,,
 Oschad bank Ice,2025,2025-02,Comp Lead,Raconteur,commercial,,,,thumbs/ice_1k.jpg,,,,,
@@ -44,7 +44,7 @@ Oschad bank Fashion,2025,2025-04,Comp Lead,Raconteur,commercial,,,,thumbs/fashio
 Mavka: Aquapark,2025,2025-05,Compositing Artist,Animagrad,commercial,,,,thumbs/aquapark_1k.jpg,,,,,
 Loboda – Visuals,2025,2025-06,Compositing Artist,Raconteur,music video,,,,thumbs/loboda_1k.jpg,,,,,
 Bney Aish – City,2025,2025-07,Comp Lead,Raconteur,commercial,,,,thumbs/piano_1k.jpg,,,,,
-Nich – Latex Fauna,2025,2025-08,Comp Lead,Raconteur,music video,yes,,,thumbs/nich_1k.jpg,thumbs/brakedown_V025.webm,thumbs/brakedown_V025.webm,,,
+Nich – Latex Fauna,2025,2025-08,Comp Lead,Raconteur,music video,,,,thumbs/nich_1k.jpg,thumbs/brakedown_V025.webm,thumbs/brakedown_V025.webm,,,4
 Anna Zak – Hi Ahuva,2025,2025-09,Comp Lead,Raconteur,music video,,,,thumbs/zak_1k.jpg,,,,,
 Noa Kirel – Bad Apple,2025,2025-10,Comp Lead,Raconteur,music video,,,,thumbs/bad_apple_1k.jpg,,,,,
 Noa Kirel - Prime Minister,2025,2025-11,Compositing Artist,Raconteur,music video,,,,thumbs/minister_1k.jpg,,,,,
