@@ -133,6 +133,9 @@
   .card-title { font-size: 16px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; color: #fff; }
   .card-desc { font-size: 11px; line-height: 1.6; color: rgba(255,255,255,0.6); font-weight: 300; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.3s; opacity: 0; }
   .card:hover .card-desc { max-height: 60px; opacity: 1; }
+  .scrub-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; z-index: 5; background: rgba(255,255,255,0.15); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  .card:hover .scrub-bar { opacity: 1; }
+  .scrub-progress { height: 100%; width: 0%; background: var(--accent); }
   .card-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
   .fallback-play { width: 34px; height: 34px; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .fallback-play::after { content: ''; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid rgba(255,255,255,0.4); margin-left: 3px; }
@@ -473,12 +476,32 @@ function renderGrid(projects) {
     if (p.thumb) mediaHTML += '<img src="' + p.thumb + '" alt="' + p.title + '" />';
     if (p.preview) mediaHTML += '<video src="' + p.preview + '" muted loop playsinline preload="auto"></video>';
     if (!p.thumb && !p.preview) mediaHTML = '<div class="card-fallback"><div class="fallback-play"></div></div>';
-    card.innerHTML = mediaHTML + '<div class="card-overlay"></div>' + (p.role ? '<span class="role-tag">' + p.role + '</span>' : '') + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>';
+    card.innerHTML = mediaHTML + '<div class="card-overlay"></div>' + (p.role ? '<span class="role-tag">' + p.role + '</span>' : '') + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>' + (p.preview ? '<div class="scrub-bar"><div class="scrub-progress"></div></div>' : '');
     if (p.preview) {
       (function(c) {
         var v = c.querySelector("video");
-        c.addEventListener("mouseenter", function() { v.currentTime=0; var pl=v.play(); if(pl) pl.catch(function(){}); });
-        c.addEventListener("mouseleave", function() { v.pause(); v.currentTime=0; });
+        var bar = c.querySelector(".scrub-progress");
+        var seeking = false;
+        var pendingPct = null;
+        function scrubTo(clientX) {
+          var rect = c.getBoundingClientRect();
+          var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+          bar.style.width = (pct * 100) + "%";
+          if (!v.duration) return;
+          if (!seeking) { seeking = true; pendingPct = null; v.currentTime = pct * v.duration; }
+          else { pendingPct = pct; }
+        }
+        function scrubReset() { v.pause(); v.currentTime = 0; bar.style.width = "0%"; seeking = false; pendingPct = null; }
+        v.addEventListener("seeked", function() {
+          if (pendingPct !== null && v.duration) { v.currentTime = pendingPct * v.duration; pendingPct = null; }
+          else { seeking = false; }
+        });
+        c.addEventListener("mouseenter", function() { v.pause(); });
+        c.addEventListener("mousemove", function(e) { scrubTo(e.clientX); });
+        c.addEventListener("mouseleave", scrubReset);
+        c.addEventListener("touchstart", function(e) { v.pause(); e.preventDefault(); }, { passive: false });
+        c.addEventListener("touchmove", function(e) { scrubTo(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
+        c.addEventListener("touchend", scrubReset);
       })(card);
     }
     if (p.link) { card.addEventListener("click", function() { window.open(p.link,"_blank","noopener"); }); }
