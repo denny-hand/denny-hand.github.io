@@ -1,0 +1,142 @@
+{
+  "frames": [
+    {
+      "component": {
+        "COMPONENT_NAME_PREFIX": "",
+        "attributes": {
+          "id": "iy5r"
+        },
+        "components": [
+          {
+            "attributes": {
+              "id": "iqo2g",
+              "type": "checkbox"
+            },
+            "type": "checkbox",
+            "void": true
+          },
+          {
+            "attributes": {
+              "id": "ijel",
+              "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+"
+            },
+            "type": "image"
+          },
+          {
+            "attributes": {
+              "id": "i3nmh",
+              "type": "text"
+            },
+            "type": "input",
+            "void": true
+          },
+          {
+            "attributes": {
+              "id": "iw51p"
+            },
+            "components": [
+              {
+                "attributes": {
+                  "id": "i7svf",
+                  "value": "opt1"
+                },
+                "content": "Option 1",
+                "type": "option"
+              },
+              {
+                "attributes": {
+                  "id": "ioe82",
+                  "value": "opt2"
+                },
+                "content": "Option 2",
+                "type": "option"
+              }
+            ],
+            "type": "select"
+          },
+          {
+            "attributes": {
+              "id": "i9dz2"
+            },
+            "type": "eleventy-select"
+          },
+          {
+            "attributes": {
+              "allowfullscreen": "allowfullscreen",
+              "id": "irrv"
+            },
+            "resizable": {
+              "ratioDefault": 1
+            },
+            "sources": [],
+            "src": "img/video2.webm",
+            "type": "video"
+          },
+          {
+            "attributes": {
+              "id": "ilzi"
+            },
+            "type": "container"
+          },
+          {
+            "attributes": {
+              "id": "i8w6"
+            },
+            "components": [
+              {
+                "attributes": {
+                  "id": "isgz"
+                },
+                "content": "Insert your text here",
+                "type": "textnode"
+              }
+            ],
+            "type": "text"
+          }
+        ],
+        "docEl": {
+          "attributes": {
+            "id": "iuw6"
+          },
+          "tagName": "html"
+        },
+        "head": {
+          "attributes": {
+            "id": "i6qg"
+          },
+          "type": "head"
+        },
+        "publicStates": [],
+        "selector": {
+          "mainSelector": {
+            "pseudoClass": {
+              "hasParam": false,
+              "helpLink": "https://developer.mozilla.org/en-US/docs/Web/CSS/:hover",
+              "sentencePre": "On mouse",
+              "type": "hover"
+            },
+            "selectors": [
+              {
+                "active": true,
+                "type": "id",
+                "value": "iy5r"
+              }
+            ]
+          }
+        },
+        "stylable": [
+          "background",
+          "background-color",
+          "background-image",
+          "background-repeat",
+          "background-attachment",
+          "background-position",
+          "background-size"
+        ],
+        "type": "wrapper"
+      },
+      "id": "jx2BCpUOC7qDiqvA"
+    }
+  ],
+  "id": "5lmHmGOHKwh0ezyE"
+}
