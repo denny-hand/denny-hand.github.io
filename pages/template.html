@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Name</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f0d0b;
+    color: #ede8df;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── LAYOUT ─────────────────────────────── */
+  .page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* ─── HEADER ─────────────────────────────── */
+  .project-header {
+    margin-bottom: 48px;
+    border-bottom: 0.5px solid rgba(255,255,255,0.08);
+    padding-bottom: 32px;
+  }
+
+  .project-tag {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 12px;
+  }
+
+  .project-title {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .project-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .meta-label {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .meta-value {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* ─── SHAPES / DECORATIVE ────────────────── */
+  .shape-line {
+    width: 100%;
+    height: 0.5px;
+    background: rgba(255,255,255,0.08);
+    margin: 32px 0;
+  }
+
+  .shape-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d95a38;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  .shape-bracket {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.05em;
+  }
+
+  .accent-bar {
+    width: 32px;
+    height: 2px;
+    background: #d95a38;
+    margin-bottom: 16px;
+  }
+
+  /* ─── VIDEO ──────────────────────────────── */
+  .video-wrap {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #1a1814;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .video-wrap video,
+  .video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: cover;
+  }
+
+  .video-label {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 24px;
+  }
+
+  /* ─── IMAGES ─────────────────────────────── */
+  .image-wrap {
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #1a1814;
+    margin-bottom: 8px;
+  }
+
+  .image-wrap img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* Сетка из двух картинок */
+  .image-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* Сетка из трёх картинок */
+  .image-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* ─── TEXT ───────────────────────────────── */
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 10px;
+  }
+
+  .text-body {
+    font-size: 13px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    max-width: 680px;
+  }
+
+  .text-body p + p {
+    margin-top: 12px;
+  }
+
+  .text-highlight {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: -0.01em;
+    max-width: 680px;
+  }
+
+  /* ─── COLUMNS ────────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* ─── SECTION ─────────────────────────────── */
+  .section {
+    margin-bottom: 48px;
+  }
+
+  /* ─── TAGS LIST ──────────────────────────── */
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .tag {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.5);
+    border: 0.5px solid rgba(255,255,255,0.12);
+    border-radius: 2px;
+    padding: 4px 10px;
+  }
+
+  /* ─── MOBILE ─────────────────────────────── */
+  @media (max-width: 640px) {
+    .page { padding: 32px 20px 60px; }
+    .two-col { grid-template-columns: 1fr; gap: 24px; }
+    .image-grid-2 { grid-template-columns: 1fr; }
+    .image-grid-3 { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="project-header">
+    <div class="project-tag">Music Video · 2025</div>
+    <h1 class="project-title">Project Name</h1>
+    <div class="project-meta">
+      <div class="meta-item">
+        <span class="meta-label">Role</span>
+        <span class="meta-value">Comp Lead</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Studio</span>
+        <span class="meta-value">Studio Name</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Software</span>
+        <span class="meta-value">Nuke · After Effects</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIDEO -->
+  <div class="section">
+    <div class="video-wrap">
+      <!-- Локальный webm: -->
+      <!-- <video src="../video/project.webm" controls autoplay muted loop></video> -->
+      <!-- YouTube: -->
+      <!-- <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0" allow="autoplay; fullscreen" allowfullscreen></iframe> -->
+      <!-- Заглушка пока нет видео: -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.15);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">video placeholder</div>
+    </div>
+    <div class="video-label">Main video</div>
+  </div>
+
+  <!-- ТЕКСТОВЫЙ БЛОК -->
+  <div class="section">
+    <div class="accent-bar"></div>
+    <div class="section-label">About the project</div>
+    <div class="text-highlight">
+      Write a short punchy sentence here that captures the project. One or two lines maximum.
+    </div>
+    <div class="shape-line"></div>
+    <div class="text-body">
+      <p>Detailed description of the project goes here. Explain what you worked on, what challenges you faced, and what made this project interesting from a compositing perspective.</p>
+      <p>You can write multiple paragraphs. Talk about the tools you used, the techniques you applied, and what you're most proud of in this work.</p>
+    </div>
+  </div>
+
+  <!-- ДВЕ КОЛОНКИ: изображение + текст -->
+  <div class="section two-col">
+    <div>
+      <div class="image-wrap">
+        <img src="../thumbs/placeholder.jpg" alt="Scene description" />
+        <!-- замени src на реальный путь к картинке -->
+      </div>
+    </div>
+    <div>
+      <div class="section-label">Technical breakdown</div>
+      <div class="text-body">
+        <p>Describe the technical aspects here — how many shots, what kind of VFX work, any specific challenges or interesting solutions.</p>
+      </div>
+      <div class="tags">
+        <span class="tag">Nuke</span>
+        <span class="tag">Keying</span>
+        <span class="tag">Color Grading</span>
+        <span class="tag">CG Integration</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- СЕТКА КАРТИНОК 2 КОЛОНКИ -->
+  <div class="section">
+    <div class="section-label">Stills</div>
+    <div class="image-grid-2">
+      <div class="image-wrap" style="aspect-ratio:16/9;"></div>
+      <div class="image-wrap" style="aspect-ratio:16/9;"></div>
+    </div>
+    <div class="image-grid-3">
+      <div class="image-wrap" style="aspect-ratio:16/9;"></div>
+      <div class="image-wrap" style="aspect-ratio:16/9;"></div>
+      <div class="image-wrap" style="aspect-ratio:16/9;"></div>
+    </div>
+  </div>
+
+  <!-- БРЕЙКДАУН -->
+  <div class="section">
+    <div class="video-wrap">
+      <!-- <video src="../breakdown/project.webm" controls></video> -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.15);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">breakdown placeholder</div>
+    </div>
+    <div class="video-label">Breakdown</div>
+  </div>
+
+  <!-- ДЕКОРАТИВНЫЙ ФУТЕР -->
+  <div class="shape-line"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span class="shape-bracket">[ denny ]</span>
+    <span style="font-size:10px;color:rgba(255,255,255,0.2);letter-spacing:0.05em;">2025</span>
+  </div>
+
+</div>
+</body>
+</html>
