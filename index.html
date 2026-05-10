@@ -483,12 +483,14 @@ function renderGrid(projects) {
         var bar = c.querySelector(".scrub-progress");
         var rafId = null;
         var pendingPct = null;
+        var isTouch = false;
         function doSeek() {
           rafId = null;
           if (!v.duration || pendingPct === null) return;
-          if (v.fastSeek) v.fastSeek(pendingPct * v.duration);
-          else v.currentTime = pendingPct * v.duration;
+          var t = pendingPct * v.duration;
           pendingPct = null;
+          if (isTouch && v.fastSeek) v.fastSeek(t);
+          else v.currentTime = t;
         }
         function scrubTo(clientX) {
           var rect = c.getBoundingClientRect();
@@ -498,10 +500,10 @@ function renderGrid(projects) {
           if (!rafId) rafId = requestAnimationFrame(doSeek);
         }
         function scrubReset() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } pendingPct = null; v.pause(); v.currentTime = 0; bar.style.width = "0%"; }
-        c.addEventListener("mouseenter", function() { v.pause(); });
+        c.addEventListener("mouseenter", function() { isTouch = false; v.pause(); });
         c.addEventListener("mousemove", function(e) { scrubTo(e.clientX); });
         c.addEventListener("mouseleave", scrubReset);
-        c.addEventListener("touchstart", function(e) { v.pause(); c.classList.add("touch-active"); e.preventDefault(); }, { passive: false });
+        c.addEventListener("touchstart", function(e) { isTouch = true; v.pause(); c.classList.add("touch-active"); e.preventDefault(); }, { passive: false });
         c.addEventListener("touchmove", function(e) { scrubTo(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
         c.addEventListener("touchend", function() { scrubReset(); c.classList.remove("touch-active"); });
       })(card);
