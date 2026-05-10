@@ -107,6 +107,8 @@
 
   /* filter */
   .filter-bar { padding: 16px 28px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-bar--role { padding-top: 8px; }
+  .filter-bar--role:empty { display: none; }
   .filter-btn { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 400; color: var(--text-muted); background: none; border: 0.5px solid var(--border); border-radius: 20px; padding: 5px 14px; cursor: pointer; transition: color 0.2s, border-color 0.2s, background 0.2s; letter-spacing: 0.03em; white-space: nowrap; }
   .filter-btn:hover { color: var(--text); border-color: var(--text-muted); }
   .filter-btn.active { color: var(--bg); background: var(--text); border-color: var(--text); }
@@ -127,7 +129,7 @@
   .card-body { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; padding: 18px 20px; display: flex; flex-direction: column; gap: 5px; }
   .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
   .card-year { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 300; }
-  .role-tag { font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(255,255,255,0.9); background: rgba(200,75,47,0.75); padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
+  .role-tag { position: absolute; top: 12px; right: 12px; z-index: 4; font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(255,255,255,0.9); background: rgba(200,75,47,0.75); padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
   .card-title { font-size: 16px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; color: #fff; }
   .card-desc { font-size: 11px; line-height: 1.6; color: rgba(255,255,255,0.6); font-weight: 300; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.3s; opacity: 0; }
   .card:hover .card-desc { max-height: 60px; opacity: 1; }
@@ -243,7 +245,7 @@
     <div class="hero-label"><span class="hero-dot"></span><span id="hero-title"></span></div>
   </div>
 
-  <div class="filter-bar">
+  <div class="filter-bar" id="cat-filter-bar">
     <button class="filter-btn active" onclick="setFilter('all', this)">all</button>
     <button class="filter-btn" onclick="setFilter('feature film', this)">feature film</button>
     <button class="filter-btn" onclick="setFilter('animation', this)">animation</button>
@@ -251,6 +253,7 @@
     <button class="filter-btn" onclick="setFilter('commercial', this)">commercial</button>
     <button class="filter-btn" onclick="setFilter('music video', this)">music video</button>
   </div>
+  <div class="filter-bar filter-bar--role" id="role-filter-bar"></div>
 
   <div class="grid-wrap">
     <div class="grid" id="grid"></div>
@@ -290,6 +293,7 @@
 
 <script>
 const PASSWORD = "1111";
+const PASSWORD_ENABLED = false; // true = включить пароль, false = отключить
 
 function parseCSV(text) {
   var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
@@ -323,14 +327,32 @@ function sorted(list) {
 }
 
 var currentFilter = 'all';
-function setFilter(cat, btn) {
-  currentFilter = cat;
-  var btns = document.querySelectorAll('.filter-btn');
-  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
-  btn.classList.add('active');
-  var filtered = cat === 'all' ? window._allProjects : window._allProjects.filter(function(p) { return (p.category || '').toLowerCase() === cat; });
+var currentRoleFilter = 'all';
+
+function applyFilters() {
+  var filtered = window._allProjects.filter(function(p) {
+    var catOk = currentFilter === 'all' || (p.category || '').toLowerCase() === currentFilter;
+    var roleOk = currentRoleFilter === 'all' || (p.role || '').toLowerCase() === currentRoleFilter;
+    return catOk && roleOk;
+  });
   document.getElementById('grid').innerHTML = '';
   renderGrid(filtered);
+}
+
+function setFilter(cat, btn) {
+  currentFilter = cat;
+  var btns = document.querySelectorAll('#cat-filter-bar .filter-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function setRoleFilter(role, btn) {
+  currentRoleFilter = role;
+  var btns = document.querySelectorAll('#role-filter-bar .filter-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  btn.classList.add('active');
+  applyFilters();
 }
 
 function getEmbedUrl(url, autoplay) {
@@ -451,7 +473,7 @@ function renderGrid(projects) {
     if (p.thumb) mediaHTML += '<img src="' + p.thumb + '" alt="' + p.title + '" />';
     if (p.preview) mediaHTML += '<video src="' + p.preview + '" muted loop playsinline preload="auto"></video>';
     if (!p.thumb && !p.preview) mediaHTML = '<div class="card-fallback"><div class="fallback-play"></div></div>';
-    card.innerHTML = mediaHTML + '<div class="card-overlay"></div><div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span><span class="role-tag">' + p.role + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>';
+    card.innerHTML = mediaHTML + '<div class="card-overlay"></div>' + (p.role ? '<span class="role-tag">' + p.role + '</span>' : '') + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>';
     if (p.preview) {
       (function(c) {
         var v = c.querySelector("video");
@@ -490,13 +512,35 @@ function unlock() {
       window._allProjects = sorted(parseCSV(text));
       renderHero(window._allProjects);
       renderGrid(window._allProjects);
+      var roles = [];
+      window._allProjects.forEach(function(p) {
+        var r = (p.role || '').trim();
+        if (r && roles.indexOf(r.toLowerCase()) === -1) roles.push(r.toLowerCase());
+      });
+      var roleBar = document.getElementById('role-filter-bar');
+      if (roleBar && roles.length > 1) {
+        var allBtn = document.createElement('button');
+        allBtn.className = 'filter-btn active';
+        allBtn.textContent = 'all roles';
+        allBtn.onclick = function() { setRoleFilter('all', this); };
+        roleBar.appendChild(allBtn);
+        roles.forEach(function(role) {
+          var btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.textContent = role;
+          btn.onclick = function() { setRoleFilter(role, this); };
+          roleBar.appendChild(btn);
+        });
+      }
     })
     .catch(function(){ renderGrid([]); });
 }
 
+if (!PASSWORD_ENABLED) { window.addEventListener("load", unlock); }
+
 function check() {
   var val = document.getElementById("pwd").value;
-  if (val === PASSWORD) { unlock(); }
+  if (!PASSWORD_ENABLED || val === PASSWORD) { unlock(); }
   else {
     var input = document.getElementById("pwd"), err = document.getElementById("err");
     input.classList.add("error"); err.textContent = "wrong password";
