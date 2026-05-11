@@ -36,6 +36,9 @@
   .lock-btn { width: 100%; padding: 10px; font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text); background: none; border: 0.5px solid var(--input-border); border-radius: 4px; cursor: pointer; transition: background 0.2s; letter-spacing: 0.05em; }
   .lock-btn:hover { background: var(--card-hover); border-color: var(--text-muted); }
   .lock-error { font-size: 11px; color: var(--accent); font-weight: 300; height: 14px; }
+  .lock-hint { font-size: 11px; color: var(--text-muted); font-weight: 300; text-align: center; margin-top: 20px; line-height: 1.8; max-width: 210px; position: relative; z-index: 1; opacity: 0.75; }
+  .lock-hint a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; transition: color 0.2s; }
+  .lock-hint a:hover { color: var(--text); }
 
   /* site */
   #site { display: none; }
@@ -48,10 +51,14 @@
   .site-logo { width: 22px; height: 22px; stroke: var(--text); flex-shrink: 0; transform-origin: bottom center; }
   @keyframes wave { 0% { transform: rotate(0deg); } 15% { transform: rotate(14deg); } 30% { transform: rotate(-8deg); } 45% { transform: rotate(12deg); } 60% { transform: rotate(-6deg); } 75% { transform: rotate(10deg); } 100% { transform: rotate(0deg); } }
   .site-brand:hover .site-logo { animation: wave 1.2s ease-in-out infinite; }
-  .header-right { display: flex; align-items: center; gap: 24px; }
-  nav { display: flex; gap: 20px; }
-  nav a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
-  nav a:hover, nav a.active { color: var(--text); }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+
+  /* envelope button */
+  .envelope-btn { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; color: var(--text-muted); transition: color 0.2s; }
+  .envelope-btn:hover { color: var(--text); }
+  .envelope-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* theme toggle */
   .theme-toggle { cursor: pointer; background: none; border: none; padding: 0; display: flex; align-items: center; }
   .toggle-track { width: 32px; height: 18px; background: var(--text-muted); border-radius: 9px; position: relative; transition: background 0.3s; }
   .toggle-knob { width: 12px; height: 12px; background: var(--bg); border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.3s, background 0.3s; }
@@ -125,9 +132,9 @@
   .card { display: block; text-decoration: none; color: inherit; border-radius: 6px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: var(--thumb); cursor: pointer; width: 100%; min-width: 0; opacity: 0; transform: translateY(10px); transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
   .card.visible { opacity: 1; transform: translateY(0); }
   .card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.18); transform: translateY(-3px); }
-  .card img, .card video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
+  .card img:not(.card-logo), .card video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
   .card video { opacity: 0; transition: opacity 0.4s ease, transform 0.45s ease; z-index: 1; }
-  .card:hover img, .card:hover video { transform: scale(1.04); }
+  .card:hover img:not(.card-logo), .card:hover video { transform: scale(1.04); }
   .card:hover video, .card.touch-active video { opacity: 1; }
   .card-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to bottom, transparent 30%, rgba(10,9,8,0.55) 65%, rgba(10,9,8,0.82) 100%); }
   .card-body { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; padding: 18px 20px; display: flex; flex-direction: column; gap: 5px; }
@@ -144,7 +151,11 @@
   .fallback-play { width: 34px; height: 34px; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .fallback-play::after { content: ''; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid rgba(255,255,255,0.4); margin-left: 3px; }
 
-  /* modal */
+  /* studio logo on card */
+  .card-logo { position: absolute; bottom: 12px; right: 12px; z-index: 4; width: 52px; height: 20px; object-fit: contain; object-position: right center; opacity: 0.75; transition: opacity 0.25s; pointer-events: none; }
+  .card:hover .card-logo { opacity: 1; }
+
+  /* main modal */
   #modal { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
   #modal.open { display: flex; background: rgba(0,0,0,0.88); }
   .modal-inner { position: relative; width: 92%; max-width: 1100px; background: var(--modal-bg); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; transform: scale(0.92); opacity: 0; transition: transform 0.32s cubic-bezier(0.34,1.3,0.64,1), opacity 0.25s ease; }
@@ -176,23 +187,33 @@
   .modal-meta-value { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 400; }
   .modal-details { font-size: 12px; line-height: 1.75; color: rgba(255,255,255,0.5); font-weight: 300; }
 
+  /* contact modal */
+  #contact-modal { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
+  #contact-modal.open { display: flex; background: rgba(0,0,0,0.6); }
+  .contact-inner { position: relative; width: 320px; max-width: 90vw; background: var(--bg); border-radius: 14px; padding: 44px 32px 36px; display: flex; flex-direction: column; gap: 24px; transform: scale(0.9); opacity: 0; transition: transform 0.28s cubic-bezier(0.34,1.3,0.64,1), opacity 0.22s ease; border: 0.5px solid var(--border); box-shadow: 0 24px 64px rgba(0,0,0,0.18); }
+  #contact-modal.open .contact-inner { transform: scale(1); opacity: 1; }
+  .contact-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-muted); cursor: pointer; letter-spacing: 0.05em; transition: color 0.2s; padding: 4px; }
+  .contact-close:hover { color: var(--text); }
+  .contact-head { display: flex; flex-direction: column; gap: 4px; }
+  .contact-brand { display: flex; align-items: center; gap: 7px; }
+  .contact-brand-name { font-size: 20px; font-weight: 500; letter-spacing: -0.03em; }
+  .contact-brand-logo { width: 16px; height: 16px; stroke: var(--text); flex-shrink: 0; }
+  .contact-sub { font-size: 11px; color: var(--text-muted); font-weight: 300; letter-spacing: 0.02em; }
+  .contact-links-list { display: flex; flex-direction: column; gap: 8px; }
+  .contact-link-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 0.5px solid var(--border); border-radius: 7px; text-decoration: none; color: var(--text); transition: background 0.18s, border-color 0.18s; cursor: pointer; }
+  .contact-link-row:hover { background: var(--card-hover); border-color: var(--text-muted); }
+  .contact-link-label { font-size: 12px; font-weight: 400; }
+  .contact-link-arrow { font-size: 11px; color: var(--text-muted); }
+  .contact-link-row.email-copied .contact-link-label { color: var(--accent); }
+
   /* footer */
-  footer { padding: 22px 32px; border-top: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .footer-copy { font-size: 11px; color: var(--text-muted); font-weight: 300; }
-  .footer-links { display: flex; gap: 20px; }
-  .footer-links a { font-size: 11px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
-  .footer-links a:hover { color: var(--text); }
-  .email-toggle { font-size: 11px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
-  .email-toggle:hover { color: var(--text); }
-  .email-toggle.revealed { color: var(--text); }
+  footer { padding: 28px 32px; border-top: 0.5px solid var(--border); display: flex; justify-content: center; align-items: center; }
 
   /* mobile */
   @media (max-width: 600px) {
     header { padding: 14px 16px; }
     .site-name { font-size: 13px; }
-    nav { gap: 12px; }
-    nav a { font-size: 11px; }
-    .header-right { gap: 16px; }
+    .header-right { gap: 14px; }
     .hero { padding: 12px 12px 0; }
     .hero-player { max-height: 28vh; }
     .filter-bar { padding: 12px 12px 0; }
@@ -201,7 +222,7 @@
     .grid { grid-template-columns: 1fr; gap: 10px; }
     .card-title { font-size: 15px; }
     .card-body { padding: 14px 16px; }
-    footer { padding: 18px 16px; flex-direction: column; align-items: flex-start; gap: 12px; }
+    footer { padding: 20px 16px; }
     .modal-inner { width: 100%; max-width: 100%; border-radius: 0; max-height: 100vh; }
     .modal-body { flex-direction: column; overflow-y: auto; }
     .modal-info { width: 100%; border-left: none; border-top: 0.5px solid rgba(255,255,255,0.08); }
@@ -225,6 +246,7 @@
     <div class="lock-error" id="err"></div>
     <button class="lock-btn" onclick="check()">enter</button>
   </div>
+  <p class="lock-hint" id="lock-hint"></p>
 </div>
 
 <div id="site">
@@ -236,11 +258,12 @@
       </svg>
     </div>
     <div class="header-right">
-      <nav>
-        <a href="#" class="active">work</a>
-        <a href="#">about</a>
-        <a href="#">contact</a>
-      </nav>
+      <button class="envelope-btn" onclick="openContact()" aria-label="contact">
+        <svg viewBox="0 0 24 24">
+          <rect x="2" y="4" width="20" height="16" rx="2.5"/>
+          <polyline points="2,6 12,13 22,6"/>
+        </svg>
+      </button>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="toggle theme">
         <div class="toggle-track"><div class="toggle-knob"></div></div>
       </button>
@@ -274,15 +297,16 @@
   </div>
 
   <footer>
-    <span class="footer-copy">© 2024 denny</span>
-    <div class="footer-links">
-      <a href="#" id="footer-imdb" target="_blank" rel="noopener">imdb</a>
-      <a href="#" id="footer-linkedin" target="_blank" rel="noopener">linkedin</a>
-      <span class="email-toggle" id="email-toggle" onclick="showEmail()">email</span>
+    <div class="site-brand">
+      <span class="site-name">denny</span>
+      <svg class="site-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
+        <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
+      </svg>
     </div>
   </footer>
 </div>
 
+<!-- project modal -->
 <div id="modal" onclick="handleModalClick(event)">
   <div class="modal-inner">
     <div class="modal-header">
@@ -303,6 +327,23 @@
         <p class="modal-details" id="modal-details"></p>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- contact modal -->
+<div id="contact-modal" onclick="handleContactClick(event)">
+  <div class="contact-inner">
+    <button class="contact-close" onclick="closeContact()">close ✕</button>
+    <div class="contact-head">
+      <div class="contact-brand">
+        <span class="contact-brand-name">denny</span>
+        <svg class="contact-brand-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
+          <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
+        </svg>
+      </div>
+      <p class="contact-sub" id="contact-sub"></p>
+    </div>
+    <div class="contact-links-list" id="contact-links-list"></div>
   </div>
 </div>
 
@@ -340,6 +381,14 @@ function parseCSV(text) {
   });
 }
 
+function updateLockHint(email) {
+  var hint = document.getElementById("lock-hint");
+  if (!hint) return;
+  if (email) {
+    hint.innerHTML = "no password? write me at<br><a href=\"mailto:" + email + "\">" + email + "</a>";
+  }
+}
+
 function applySettings(s) {
   // theme
   var theme = (s.theme || "1").trim();
@@ -360,13 +409,59 @@ function applySettings(s) {
     var roleBar = document.getElementById("role-filter-bar");
     if (roleBar) roleBar.style.display = "none";
   }
-  // links
-  var imdbEl = document.getElementById("footer-imdb");
-  var liEl = document.getElementById("footer-linkedin");
-  if (imdbEl && s.imdb) imdbEl.href = s.imdb;
-  if (liEl && s.linkedin) liEl.href = s.linkedin;
+  // store email
   if (s.email) window._contactEmail = s.email;
+  // populate contact modal
+  buildContactModal(s);
 }
+
+function buildContactModal(s) {
+  var list = document.getElementById("contact-links-list");
+  var sub = document.getElementById("contact-sub");
+  if (!list) return;
+  list.innerHTML = "";
+  if (sub) sub.textContent = s.role || "";
+  if (s.imdb) {
+    var a = document.createElement("a");
+    a.className = "contact-link-row";
+    a.href = s.imdb; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = '<span class="contact-link-label">IMDb</span><span class="contact-link-arrow">↗</span>';
+    list.appendChild(a);
+  }
+  if (s.linkedin) {
+    var a = document.createElement("a");
+    a.className = "contact-link-row";
+    a.href = s.linkedin; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = '<span class="contact-link-label">LinkedIn</span><span class="contact-link-arrow">↗</span>';
+    list.appendChild(a);
+  }
+  if (s.email) {
+    var div = document.createElement("div");
+    div.className = "contact-link-row";
+    div.innerHTML = '<span class="contact-link-label" id="contact-email-label">' + s.email + '</span><span class="contact-link-arrow">copy</span>';
+    div.addEventListener("click", function() {
+      navigator.clipboard.writeText(s.email).catch(function(){});
+      div.classList.add("email-copied");
+      var lbl = document.getElementById("contact-email-label");
+      if (lbl) lbl.textContent = "copied!";
+      setTimeout(function() {
+        div.classList.remove("email-copied");
+        if (lbl) lbl.textContent = s.email;
+      }, 1800);
+    });
+    list.appendChild(div);
+  }
+}
+
+function openContact() {
+  document.getElementById("contact-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeContact() {
+  document.getElementById("contact-modal").classList.remove("open");
+  document.body.style.overflow = "";
+}
+function handleContactClick(e) { if (e.target === document.getElementById("contact-modal")) closeContact(); }
 
 function sorted(list) {
   var featured = list.filter(function(x) { return (x.featured || "").toLowerCase() === "yes"; });
@@ -440,7 +535,6 @@ function playHero() {
   var overlay = document.getElementById("hero-overlay");
   var player = document.getElementById("hero-player");
   if (overlay) overlay.style.display = "none";
-  // replace thumb with actual player
   var url = window._heroVideoUrl;
   if (!url) return;
   var container = document.createElement("div");
@@ -471,7 +565,6 @@ function renderHero(projects) {
   document.getElementById("hero-title").textContent = p.title + (p.year ? "  ·  " + p.year : "");
   hero.style.display = "block";
   window._heroVideoUrl = p.video;
-  // show thumbnail if available, overlay stays on top
   if (p.thumb) {
     var img = document.createElement("img");
     img.src = p.thumb;
@@ -499,8 +592,6 @@ function openSVGModal(p, inner) {
       svgEl.removeAttribute("height");
       svgEl.style.width = "100%";
       svgEl.style.height = "auto";
-
-      // position videos after SVG is laid out
       container.style.position = "relative";
       requestAnimationFrame(function() {
         var all = svgEl.querySelectorAll("[id], [inkscape\\:label]");
@@ -508,12 +599,9 @@ function openSVGModal(p, inner) {
           var label = el.getAttribute("inkscape:label") || el.getAttribute("id") || "";
           if (!label.match(/__(.*\.(webm|mp4|mov))$/i)) return;
           var src = label.replace(/__/g, "/");
-
           var elRect = el.getBoundingClientRect();
           var cRect = container.getBoundingClientRect();
-
           el.style.opacity = "0";
-
           var vid = document.createElement("video");
           vid.src = src;
           vid.muted = true;
@@ -604,7 +692,12 @@ function checkHash() {
 }
 
 function handleModalClick(e) { if (e.target === document.getElementById("modal")) closeModal(); }
-document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") {
+    if (document.getElementById("contact-modal").classList.contains("open")) closeContact();
+    else closeModal();
+  }
+});
 
 function makeCard(p) {
   var card = document.createElement("div");
@@ -613,12 +706,17 @@ function makeCard(p) {
   if (p.thumb) mediaHTML += '<img src="' + p.thumb + '" alt="' + p.title + '" />';
   if (p.preview) mediaHTML += '<video src="' + p.preview + '" muted loop playsinline preload="auto"></video>';
   if (!p.thumb && !p.preview) mediaHTML = '<div class="card-fallback"><div class="fallback-play"></div></div>';
-  card.innerHTML = mediaHTML + '<div class="card-overlay"></div>' + (p.role ? '<span class="role-tag">' + p.role + '</span>' : '') + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>' + (p.preview ? '<div class="scrub-bar"><div class="scrub-progress"></div></div>' : '');
+  var logoHTML = p.logo ? '<img class="card-logo" src="' + p.logo + '" alt="" />' : '';
+  card.innerHTML = mediaHTML
+    + '<div class="card-overlay"></div>'
+    + (p.role ? '<span class="role-tag">' + p.role + '</span>' : '')
+    + logoHTML
+    + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>'
+    + (p.preview ? '<div class="scrub-bar"><div class="scrub-progress"></div></div>' : '');
   return card;
 }
 
 function renderGrid(projects) {
-  var gridWrap = document.getElementById("grid").parentElement;
   var featured = projects.filter(function(p) { return p.priority; });
   var regular = projects.filter(function(p) { return !p.priority; });
   var allCards = [];
@@ -718,16 +816,6 @@ function attachScrub(c) {
   });
 }
 
-function showEmail() {
-  var email = window._contactEmail || "email";
-  var el = document.getElementById("email-toggle");
-  if (el.classList.contains("revealed")) {
-    navigator.clipboard.writeText(email).catch(function(){});
-    el.textContent = "copied!";
-    setTimeout(function(){ el.textContent = email; }, 1500);
-  } else { el.classList.add("revealed"); el.textContent = email; }
-}
-
 function toggleTheme() {
   var t = document.documentElement.getAttribute("data-theme");
   document.documentElement.setAttribute("data-theme", t === "dark" ? "light" : "dark");
@@ -787,6 +875,7 @@ window.addEventListener("load", function() {
       window._cachedCSV = text;
       parseCSV(text); // заполняет window._settings
       var s = window._settings || {};
+      if (s.email) updateLockHint(s.email);
       var pwEnabled = s.password_enabled !== "false";
       var pw = (s.password || "").trim();
       if (!pwEnabled || !pw) { unlock(); }
