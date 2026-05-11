@@ -701,9 +701,21 @@ function attachScrub(c) {
     if (!rafId) rafId = requestAnimationFrame(doSeek);
   }
   function scrubReset() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } pendingPct = null; v.pause(); v.currentTime = 0; bar.style.width = "0%"; }
-  c.addEventListener("mouseenter", function() { isTouch = false; v.pause(); });
+  c.addEventListener("mouseenter", function() {
+    isTouch = false; v.pause();
+    v.style.transition = "opacity 0.4s ease";
+    v.style.transform = "scale(1.04)";
+    var img = c.querySelector("img");
+    if (img) { img.style.transition = "none"; img.style.transform = "scale(1.04)"; }
+  });
   c.addEventListener("mousemove", function(e) { scrubTo(e.clientX); });
-  c.addEventListener("mouseleave", scrubReset);
+  c.addEventListener("mouseleave", function() {
+    scrubReset();
+    v.style.transition = "";
+    v.style.transform = "";
+    var img = c.querySelector("img");
+    if (img) { img.style.transition = ""; img.style.transform = ""; }
+  });
 }
 
 function showEmail() {
