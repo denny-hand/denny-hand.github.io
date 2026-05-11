@@ -657,9 +657,13 @@ function attachScrub(c) {
   var rafId = null;
   var pendingPct = null;
   var isTouch = false;
+  var lastSeekAt = 0;
   function doSeek() {
     rafId = null;
     if (!v.duration || pendingPct === null) return;
+    var now = Date.now();
+    if (isTouch && now - lastSeekAt < 100) { rafId = requestAnimationFrame(doSeek); return; }
+    lastSeekAt = now;
     var t = pendingPct * v.duration;
     pendingPct = null;
     if (isTouch && v.fastSeek) v.fastSeek(t);
@@ -676,9 +680,6 @@ function attachScrub(c) {
   c.addEventListener("mouseenter", function() { isTouch = false; v.pause(); });
   c.addEventListener("mousemove", function(e) { scrubTo(e.clientX); });
   c.addEventListener("mouseleave", scrubReset);
-  c.addEventListener("touchstart", function() { isTouch = true; v.pause(); c.classList.add("touch-active"); }, { passive: true });
-  c.addEventListener("touchmove", function(e) { scrubTo(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
-  c.addEventListener("touchend", function() { scrubReset(); c.classList.remove("touch-active"); });
 }
 
 function showEmail() {
