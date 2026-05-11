@@ -307,8 +307,7 @@
 </div>
 
 <script>
-const PASSWORD = "1111";
-const PASSWORD_ENABLED = false; // true = включить пароль, false = отключить
+// пароль управляется через CSV: setting:password и setting:password_enabled
 
 function parseCSV(text) {
   var settings = {};
@@ -548,7 +547,12 @@ function openSVGModal(p, inner) {
     });
 }
 
+function slugify(s) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 function openModal(p) {
+  history.replaceState(null, "", "#" + slugify(p.title));
   var inner = document.querySelector(".modal-inner");
   document.getElementById("modal-title").textContent = p.title || "";
   if (p.page && p.page.match(/\.svg$/i)) {
@@ -580,6 +584,7 @@ function openModal(p) {
 }
 
 function closeModal() {
+  history.replaceState(null, "", window.location.pathname);
   document.getElementById("modal").classList.remove("open");
   setTimeout(function() {
     document.getElementById("modal-main-wrap").innerHTML = "";
@@ -589,6 +594,13 @@ function closeModal() {
     document.querySelector(".modal-inner").classList.remove("svg-mode");
   }, 300);
   document.body.style.overflow = "";
+}
+
+function checkHash() {
+  var hash = window.location.hash.slice(1);
+  if (!hash || !window._allProjects) return;
+  var p = window._allProjects.filter(function(p) { return slugify(p.title) === hash; })[0];
+  if (p) openModal(p);
 }
 
 function handleModalClick(e) { if (e.target === document.getElementById("modal")) closeModal(); }
@@ -709,52 +721,67 @@ function toggleTheme() {
   document.documentElement.setAttribute("data-theme", t === "dark" ? "light" : "dark");
 }
 
+function processCSV(text) {
+  window._allProjects = sorted(parseCSV(text));
+  applySettings(window._settings || {});
+  renderHero(window._allProjects);
+  renderGrid(window._allProjects);
+  setTimeout(checkHash, 100);
+  var roles = [];
+  window._allProjects.forEach(function(p) {
+    var r = (p.role || '').trim();
+    if (r && roles.indexOf(r.toLowerCase()) === -1) roles.push(r.toLowerCase());
+  });
+  var roleBar = document.getElementById('role-filter-bar');
+  if (roleBar && roles.length > 1) {
+    var allBtn = document.createElement('button');
+    allBtn.className = 'filter-btn active';
+    allBtn.textContent = 'all roles';
+    allBtn.onclick = function() { setRoleFilter('all', this); };
+    roleBar.appendChild(allBtn);
+    roles.forEach(function(role) {
+      var btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.textContent = role;
+      btn.onclick = function() { setRoleFilter(role, this); };
+      roleBar.appendChild(btn);
+    });
+  }
+}
+
 function unlock() {
   if (window._stopNuke) window._stopNuke();
   document.getElementById("lock").classList.add("hidden");
   document.getElementById("site").classList.add("visible");
-  fetch("projects.csv?nocache=" + Date.now())
-    .then(function(r){ return r.text(); })
-    .then(function(text){
-      window._allProjects = sorted(parseCSV(text));
-      applySettings(window._settings || {});
-      renderHero(window._allProjects);
-      renderGrid(window._allProjects);
-      var roles = [];
-      window._allProjects.forEach(function(p) {
-        var r = (p.role || '').trim();
-        if (r && roles.indexOf(r.toLowerCase()) === -1) roles.push(r.toLowerCase());
-      });
-      var roleBar = document.getElementById('role-filter-bar');
-      if (roleBar && roles.length > 1) {
-        var allBtn = document.createElement('button');
-        allBtn.className = 'filter-btn active';
-        allBtn.textContent = 'all roles';
-        allBtn.onclick = function() { setRoleFilter('all', this); };
-        roleBar.appendChild(allBtn);
-        roles.forEach(function(role) {
-          var btn = document.createElement('button');
-          btn.className = 'filter-btn';
-          btn.textContent = role;
-          btn.onclick = function() { setRoleFilter(role, this); };
-          roleBar.appendChild(btn);
-        });
-      }
-    })
-    .catch(function(){ renderGrid([]); });
+  if (window._cachedCSV) { processCSV(window._cachedCSV); }
+  else { fetch("projects.csv?nocache=" + Date.now()).then(function(r){ return r.text(); }).then(processCSV).catch(function(){ renderGrid([]); }); }
 }
-
-if (!PASSWORD_ENABLED) { window.addEventListener("load", unlock); }
 
 function check() {
   var val = document.getElementById("pwd").value;
-  if (!PASSWORD_ENABLED || val === PASSWORD) { unlock(); }
+  var pw = (window._settings && window._settings.password) ? window._settings.password.trim() : "";
+  if (val === pw) { unlock(); }
   else {
     var input = document.getElementById("pwd"), err = document.getElementById("err");
     input.classList.add("error"); err.textContent = "wrong password";
     setTimeout(function(){ input.classList.remove("error"); err.textContent=""; input.value=""; input.focus(); }, 1500);
   }
 }
+
+window.addEventListener("load", function() {
+  fetch("projects.csv?nocache=" + Date.now())
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      window._cachedCSV = text;
+      parseCSV(text); // заполняет window._settings
+      var s = window._settings || {};
+      var pwEnabled = s.password_enabled !== "false";
+      var pw = (s.password || "").trim();
+      if (!pwEnabled || !pw) { unlock(); }
+      // иначе лок-скрин уже виден, ждём ввода
+    })
+    .catch(function(){ unlock(); });
+});
 
 document.getElementById("pwd").addEventListener("keydown", function(e){ if(e.key==="Enter") check(); });
 
