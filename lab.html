@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>denny — lab</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 40 40' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f2f0eb; --text: #1a1916; --text-muted: #8a8880; --accent: #c84b2f;
+    --border: rgba(26,25,22,0.1); --card-hover: #e8e5df; --thumb: #d4d0c8;
+    --input-border: rgba(26,25,22,0.2); --input-bg: #fff; --modal-bg: #181715;
+  }
+  [data-theme="dark"] {
+    --bg: #111110; --text: #eeebe4; --text-muted: #5a5854; --accent: #d95a38;
+    --border: rgba(238,235,228,0.08); --card-hover: #1c1b18; --thumb: #252320;
+    --input-border: rgba(238,235,228,0.15); --input-bg: #1a1917; --modal-bg: #0e0d0c;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; overflow-x: hidden; width: 100%; animation: pageFadeIn 0.25s ease both; }
+  @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* header */
+  header { padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); }
+  .site-brand { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .site-name { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
+  .site-logo { width: 22px; height: 22px; stroke: var(--text); flex-shrink: 0; transform-origin: bottom center; }
+  @keyframes wave { 0%{transform:rotate(0)} 15%{transform:rotate(14deg)} 30%{transform:rotate(-8deg)} 45%{transform:rotate(12deg)} 60%{transform:rotate(-6deg)} 75%{transform:rotate(10deg)} 100%{transform:rotate(0)} }
+  .site-brand:hover .site-logo { animation: wave 1.2s ease-in-out infinite; }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  nav { display: flex; gap: 20px; }
+  nav a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; letter-spacing: 0.01em; }
+  nav a:hover, nav a.active { color: var(--text); }
+  .envelope-btn { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; color: var(--text-muted); transition: color 0.2s; }
+  .envelope-btn:hover { color: var(--text); }
+  .envelope-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .theme-toggle { cursor: pointer; background: none; border: none; padding: 0; display: flex; align-items: center; }
+  .toggle-track { width: 32px; height: 18px; background: var(--text-muted); border-radius: 9px; position: relative; transition: background 0.3s; }
+  .toggle-knob { width: 12px; height: 12px; background: var(--bg); border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.3s; }
+  [data-theme="dark"] .toggle-knob { transform: translateX(14px); }
+
+  /* lab grid */
+  .lab-wrap { padding: 28px; }
+  .lab-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  .lab-card { flex: 0 1 320px; background: var(--card-hover); border: 0.5px solid var(--border); overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(10px); transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s; }
+  .lab-card.visible { opacity: 1; transform: translateY(0); }
+  .lab-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.1); border-color: var(--text-muted); transform: translateY(-3px); }
+  .lab-card-thumb { width: 100%; aspect-ratio: 3/2; overflow: hidden; background: var(--thumb); position: relative; }
+  .lab-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .lab-card:hover .lab-card-thumb img { transform: scale(1.04); }
+  .lab-card-thumb-empty { width: 100%; aspect-ratio: 3/2; background: var(--thumb); display: flex; align-items: center; justify-content: center; }
+  .lab-card-thumb-icon { width: 28px; height: 28px; stroke: var(--text-muted); fill: none; stroke-width: 1.5; stroke-linecap: round; }
+  .lab-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; }
+  .lab-card-tag { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); font-weight: 400; }
+  .lab-card-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.04em; line-height: 1.1; color: var(--text); }
+  .lab-card-date { font-size: 10px; color: var(--text-muted); font-weight: 300; }
+  .lab-card-desc { font-size: 11px; line-height: 1.65; color: var(--text-muted); font-weight: 300; margin-top: 2px; }
+
+  /* lab modal */
+  #lab-modal { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
+  #lab-modal.open { display: flex; background: rgba(0,0,0,0.85); }
+  .lab-modal-inner { position: relative; width: 92%; max-width: 680px; background: var(--modal-bg); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; transform: scale(0.92); opacity: 0; transition: transform 0.32s cubic-bezier(0.34,1.3,0.64,1), opacity 0.25s ease; }
+  #lab-modal.open .lab-modal-inner { transform: scale(1); opacity: 1; }
+  .lab-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 0.5px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+  .lab-modal-tag { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+  .lab-modal-close { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 11px; font-family: 'Inter', sans-serif; cursor: pointer; letter-spacing: 0.05em; transition: color 0.2s; padding: 4px 0; }
+  .lab-modal-close:hover { color: #fff; }
+  .lab-modal-body { overflow-y: auto; flex: 1; }
+  .lab-modal-media { width: 100%; aspect-ratio: 3/2; background: #000; position: relative; flex-shrink: 0; }
+  .lab-modal-media img, .lab-modal-media video, .lab-modal-media iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: none; }
+  .lab-modal-content { padding: 24px 24px 28px; display: flex; flex-direction: column; gap: 12px; }
+  .lab-modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; color: rgba(255,255,255,0.92); }
+  .lab-modal-date { font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 300; }
+  .lab-modal-desc { font-size: 13px; line-height: 1.75; color: rgba(255,255,255,0.55); font-weight: 300; }
+  .lab-modal-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 11px; color: rgba(255,255,255,0.5); text-decoration: none; border-bottom: 0.5px solid rgba(255,255,255,0.15); padding-bottom: 1px; transition: color 0.2s, border-color 0.2s; }
+  .lab-modal-link:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+
+  /* footer */
+  footer { padding: 28px 32px; border-top: 0.5px solid var(--border); display: flex; justify-content: center; align-items: center; }
+
+  /* contact modal */
+  #contact-modal { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
+  #contact-modal.open { display: flex; background: rgba(0,0,0,0.6); }
+  .contact-inner { position: relative; width: 320px; max-width: 90vw; background: var(--bg); border-radius: 14px; padding: 44px 32px 36px; display: flex; flex-direction: column; gap: 24px; transform: scale(0.9); opacity: 0; transition: transform 0.28s cubic-bezier(0.34,1.3,0.64,1), opacity 0.22s ease; border: 0.5px solid var(--border); box-shadow: 0 24px 64px rgba(0,0,0,0.18); }
+  #contact-modal.open .contact-inner { transform: scale(1); opacity: 1; }
+  .contact-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-muted); cursor: pointer; letter-spacing: 0.05em; transition: color 0.2s; padding: 4px; }
+  .contact-close:hover { color: var(--text); }
+  .contact-head { display: flex; flex-direction: column; gap: 4px; }
+  .contact-brand { display: flex; align-items: center; gap: 7px; }
+  .contact-brand-name { font-size: 20px; font-weight: 500; letter-spacing: -0.03em; }
+  .contact-brand-logo { width: 16px; height: 16px; stroke: var(--text); flex-shrink: 0; }
+  .contact-sub { font-size: 11px; color: var(--text-muted); font-weight: 300; }
+  .contact-links-list { display: flex; flex-direction: column; gap: 8px; }
+  .contact-link-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 0.5px solid var(--border); border-radius: 7px; text-decoration: none; color: var(--text); transition: background 0.18s, border-color 0.18s; cursor: pointer; }
+  .contact-link-row:hover { background: var(--card-hover); border-color: var(--text-muted); }
+  .contact-link-label { font-size: 12px; font-weight: 400; }
+  .contact-link-arrow { font-size: 11px; color: var(--text-muted); }
+  .contact-link-row.email-copied .contact-link-label { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    .header-right { gap: 14px; }
+    nav { gap: 12px; }
+    nav a { font-size: 11px; }
+    .lab-wrap { padding: 12px; }
+    .lab-card { flex: 0 1 100%; }
+    footer { padding: 20px 16px; }
+    #lab-modal { padding: 0; align-items: flex-end; }
+    .lab-modal-inner { width: 100%; max-width: 100%; border-radius: 0; max-height: 100vh; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="site-brand" onclick="navigateTo(event,'index.html')">
+    <span class="site-name">denny</span>
+    <svg class="site-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
+      <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
+    </svg>
+  </div>
+  <div class="header-right">
+    <nav>
+      <a href="index.html" onclick="navigateTo(event,'index.html')">commercials</a>
+      <a href="paintings.html" onclick="navigateTo(event,'paintings.html')">paintings</a>
+      <a href="lab.html" class="active">lab</a>
+    </nav>
+    <button class="envelope-btn" onclick="openContact()" aria-label="contact">
+      <svg viewBox="0 0 24 24">
+        <rect x="2" y="4" width="20" height="16" rx="2.5"/>
+        <polyline points="2,6 12,13 22,6"/>
+      </svg>
+    </button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="toggle theme">
+      <div class="toggle-track"><div class="toggle-knob"></div></div>
+    </button>
+  </div>
+</header>
+
+<div class="lab-wrap">
+  <div class="lab-grid" id="lab-grid"></div>
+</div>
+
+<footer>
+  <div class="site-brand" onclick="navigateTo(event,'index.html')">
+    <span class="site-name">denny</span>
+    <svg class="site-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
+      <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
+    </svg>
+  </div>
+</footer>
+
+<!-- lab modal -->
+<div id="lab-modal" onclick="handleLabModalClick(event)">
+  <div class="lab-modal-inner">
+    <div class="lab-modal-header">
+      <span class="lab-modal-tag" id="lab-modal-tag"></span>
+      <button class="lab-modal-close" onclick="closeLabModal()">close ✕</button>
+    </div>
+    <div class="lab-modal-body">
+      <div class="lab-modal-media" id="lab-modal-media" style="display:none"></div>
+      <div class="lab-modal-content">
+        <div class="lab-modal-title" id="lab-modal-title"></div>
+        <div class="lab-modal-date" id="lab-modal-date"></div>
+        <div class="lab-modal-desc" id="lab-modal-desc"></div>
+        <a class="lab-modal-link" id="lab-modal-link" target="_blank" rel="noopener" style="display:none">open link ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- contact modal -->
+<div id="contact-modal" onclick="handleContactClick(event)">
+  <div class="contact-inner">
+    <button class="contact-close" onclick="closeContact()">close ✕</button>
+    <div class="contact-head">
+      <div class="contact-brand">
+        <span class="contact-brand-name">denny</span>
+        <svg class="contact-brand-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
+          <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
+        </svg>
+      </div>
+      <p class="contact-sub" id="contact-sub"></p>
+    </div>
+    <div class="contact-links-list" id="contact-links-list"></div>
+  </div>
+</div>
+
+<script>
+function navigateTo(e, href) {
+  e.preventDefault();
+  document.body.style.transition = 'opacity 0.2s ease';
+  document.body.style.opacity = '0';
+  setTimeout(function() { window.location.href = href; }, 200);
+}
+
+function toggleTheme() {
+  var t = document.documentElement.getAttribute("data-theme");
+  document.documentElement.setAttribute("data-theme", t === "dark" ? "light" : "dark");
+}
+
+function parseSettingsFromCSV(text) {
+  var settings = {};
+  var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
+  lines.forEach(function(l) {
+    if (l.trim().startsWith("setting:")) {
+      var parts = l.trim().slice(8).split(",");
+      if (parts.length >= 2) settings[parts[0].trim()] = parts[1].trim();
+    }
+  });
+  return settings;
+}
+
+function parseLabCSV(text) {
+  var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
+  if (lines.length < 2) return [];
+  var headers = lines[0].split(",").map(function(h) { return h.trim(); });
+  return lines.slice(1).map(function(line) {
+    var values = [], cur = "", inQuote = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (ch === '"' && !inQuote) { inQuote = true; continue; }
+      if (ch === '"' && inQuote) { inQuote = false; continue; }
+      if (ch === ',' && !inQuote) { values.push(cur.trim()); cur = ""; continue; }
+      cur += ch;
+    }
+    values.push(cur.trim());
+    var obj = {};
+    headers.forEach(function(h, i) { obj[h] = values[i] || ""; });
+    return obj;
+  }).filter(function(p) { return p.title; });
+}
+
+function renderLab(posts) {
+  var grid = document.getElementById("lab-grid");
+  grid.innerHTML = "";
+  // sort by date desc
+  posts.sort(function(a, b) { return (b.date || "").localeCompare(a.date || ""); });
+  posts.forEach(function(p, i) {
+    var card = document.createElement("div");
+    card.className = "lab-card";
+    var thumbHTML = "";
+    if (p.image) {
+      thumbHTML = '<div class="lab-card-thumb"><img src="' + p.image + '" alt="' + p.title + '" /></div>';
+    } else {
+      thumbHTML = '<div class="lab-card-thumb-empty"><svg class="lab-card-thumb-icon" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>';
+    }
+    card.innerHTML = thumbHTML
+      + '<div class="lab-card-body">'
+      + (p.tag ? '<span class="lab-card-tag">' + p.tag + '</span>' : '')
+      + '<div class="lab-card-title">' + p.title + '</div>'
+      + (p.date ? '<div class="lab-card-date">' + p.date + '</div>' : '')
+      + (p.desc ? '<div class="lab-card-desc">' + p.desc.substring(0, 100) + (p.desc.length > 100 ? '…' : '') + '</div>' : '')
+      + '</div>';
+    card.addEventListener("click", function() {
+      if (p.link && !p.image && !p.desc) { window.open(p.link, "_blank", "noopener"); }
+      else { openLabModal(p); }
+    });
+    grid.appendChild(card);
+    setTimeout(function() { card.classList.add("visible"); }, 30 + i * 50);
+  });
+}
+
+function openLabModal(p) {
+  document.getElementById("lab-modal-tag").textContent = p.tag || "";
+  document.getElementById("lab-modal-title").textContent = p.title || "";
+  document.getElementById("lab-modal-date").textContent = p.date || "";
+  document.getElementById("lab-modal-desc").textContent = p.desc || "";
+  var mediaEl = document.getElementById("lab-modal-media");
+  var linkEl = document.getElementById("lab-modal-link");
+  mediaEl.innerHTML = ""; mediaEl.style.display = "none";
+  if (p.image) {
+    mediaEl.style.display = "block";
+    var img = document.createElement("img"); img.src = p.image; img.alt = p.title;
+    mediaEl.appendChild(img);
+  } else if (p.video) {
+    mediaEl.style.display = "block";
+    var yt = p.video.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    var vm = p.video.match(/vimeo\.com\/(\d+)/);
+    if (yt || vm) {
+      var iframe = document.createElement("iframe");
+      iframe.src = yt ? "https://www.youtube.com/embed/"+yt[1]+"?autoplay=1&rel=0" : "https://player.vimeo.com/video/"+vm[1]+"?autoplay=1";
+      iframe.allowFullscreen = true; iframe.allow = "autoplay; fullscreen";
+      mediaEl.appendChild(iframe);
+    } else if (p.video.match(/\.(webm|mp4)$/i)) {
+      var vid = document.createElement("video"); vid.src = p.video; vid.controls = true; vid.autoplay = true;
+      mediaEl.appendChild(vid);
+    }
+  }
+  if (p.link) { linkEl.href = p.link; linkEl.style.display = "inline-flex"; }
+  else { linkEl.style.display = "none"; }
+  document.getElementById("lab-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLabModal() {
+  document.getElementById("lab-modal").classList.remove("open");
+  document.getElementById("lab-modal-media").innerHTML = "";
+  document.body.style.overflow = "";
+}
+
+function handleLabModalClick(e) { if (e.target === document.getElementById("lab-modal")) closeLabModal(); }
+
+function openContact() { document.getElementById("contact-modal").classList.add("open"); document.body.style.overflow = "hidden"; }
+function closeContact() { document.getElementById("contact-modal").classList.remove("open"); document.body.style.overflow = ""; }
+function handleContactClick(e) { if (e.target === document.getElementById("contact-modal")) closeContact(); }
+
+function buildContactModal(s) {
+  var list = document.getElementById("contact-links-list");
+  var sub = document.getElementById("contact-sub");
+  if (!list) return;
+  list.innerHTML = "";
+  if (sub) sub.textContent = s.role || "";
+  if (s.imdb) { var a = document.createElement("a"); a.className = "contact-link-row"; a.href = s.imdb; a.target = "_blank"; a.rel = "noopener"; a.innerHTML = '<span class="contact-link-label">IMDb</span><span class="contact-link-arrow">↗</span>'; list.appendChild(a); }
+  if (s.linkedin) { var a = document.createElement("a"); a.className = "contact-link-row"; a.href = s.linkedin; a.target = "_blank"; a.rel = "noopener"; a.innerHTML = '<span class="contact-link-label">LinkedIn</span><span class="contact-link-arrow">↗</span>'; list.appendChild(a); }
+  if (s.email) {
+    var div = document.createElement("div"); div.className = "contact-link-row";
+    div.innerHTML = '<span class="contact-link-label" id="contact-email-label">' + s.email + '</span><span class="contact-link-arrow">copy</span>';
+    div.addEventListener("click", function() {
+      navigator.clipboard.writeText(s.email).catch(function(){});
+      div.classList.add("email-copied");
+      var lbl = document.getElementById("contact-email-label");
+      if (lbl) lbl.textContent = "copied!";
+      setTimeout(function() { div.classList.remove("email-copied"); if (lbl) lbl.textContent = s.email; }, 1800);
+    });
+    list.appendChild(div);
+  }
+}
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") {
+    if (document.getElementById("contact-modal").classList.contains("open")) closeContact();
+    else closeLabModal();
+  }
+});
+
+window.addEventListener("load", function() {
+  fetch("projects.csv?nocache=" + Date.now())
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      var s = parseSettingsFromCSV(text);
+      var theme = (s.theme || "1").trim();
+      var toggle = document.querySelector(".theme-toggle");
+      if (theme === "2") { document.documentElement.setAttribute("data-theme","light"); if(toggle) toggle.style.display="none"; }
+      else if (theme === "3") { document.documentElement.setAttribute("data-theme","dark"); if(toggle) toggle.style.display="none"; }
+      buildContactModal(s);
+    }).catch(function(){});
+
+  fetch("lab.csv?nocache=" + Date.now())
+    .then(function(r) { return r.text(); })
+    .then(function(text) { renderLab(parseLabCSV(text)); })
+    .catch(function() { renderLab([]); });
+});
+</script>
+</body>
+</html>

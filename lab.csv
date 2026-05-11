@@ -1,0 +1,9 @@
+# LAB — TOOLS, EXPERIMENTS, POSTS
+# title — название поста (обязательно)
+# date  — дата: 2024-03
+# tag   — тег: tool / experiment / study / breakdown
+# image — превью картинка: lab/thumb.jpg (необязательно)
+# video — видео: YouTube/Vimeo ссылка или lab/video.webm (необязательно)
+# desc  — текст поста (необязательно)
+# link  — внешняя ссылка, например на GitHub (необязательно)
+title,date,tag,image,video,desc,link

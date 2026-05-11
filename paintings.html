@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>denny — paintings</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 40 40' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f2f0eb; --text: #1a1916; --text-muted: #8a8880; --accent: #c84b2f;
+    --border: rgba(26,25,22,0.1); --card-hover: #e8e5df; --thumb: #d4d0c8;
+    --input-border: rgba(26,25,22,0.2); --input-bg: #fff;
+  }
+  [data-theme="dark"] {
+    --bg: #111110; --text: #eeebe4; --text-muted: #5a5854; --accent: #d95a38;
+    --border: rgba(238,235,228,0.08); --card-hover: #1c1b18; --thumb: #252320;
+    --input-border: rgba(238,235,228,0.15); --input-bg: #1a1917;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; overflow-x: hidden; width: 100%; animation: pageFadeIn 0.25s ease both; }
+  @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* header */
+  header { padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); }
+  .site-brand { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .site-name { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
+  .site-logo { width: 22px; height: 22px; stroke: var(--text); flex-shrink: 0; transform-origin: bottom center; }
+  @keyframes wave { 0%{transform:rotate(0)} 15%{transform:rotate(14deg)} 30%{transform:rotate(-8deg)} 45%{transform:rotate(12deg)} 60%{transform:rotate(-6deg)} 75%{transform:rotate(10deg)} 100%{transform:rotate(0)} }
+  .site-brand:hover .site-logo { animation: wave 1.2s ease-in-out infinite; }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  nav { display: flex; gap: 20px; }
+  nav a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; letter-spacing: 0.01em; }
+  nav a:hover, nav a.active { color: var(--text); }
+  .envelope-btn { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; color: var(--text-muted); transition: color 0.2s; }
+  .envelope-btn:hover { color: var(--text); }
+  .envelope-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .theme-toggle { cursor: pointer; background: none; border: none; padding: 0; display: flex; align-items: center; }
+  .toggle-track { width: 32px; height: 18px; background: var(--text-muted); border-radius: 9px; position: relative; transition: background 0.3s; }
+  .toggle-knob { width: 12px; height: 12px; background: var(--bg); border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.3s; }
+  [data-theme="dark"] .toggle-knob { transform: translateX(14px); }
+
+  /* gallery */
+  .gallery-wrap { padding: 28px; }
+  .gallery-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .gallery-item { flex: 0 1 280px; aspect-ratio: 1/1; overflow: hidden; background: var(--thumb); cursor: pointer; position: relative; opacity: 0; transform: translateY(10px); transition: opacity 0.25s ease, transform 0.25s ease; }
+  .gallery-item.visible { opacity: 1; transform: translateY(0); }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .gallery-item:hover img { transform: scale(1.05); }
+  .gallery-item-title { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 12px; background: linear-gradient(transparent, rgba(0,0,0,0.6)); font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 300; opacity: 0; transition: opacity 0.2s; }
+  .gallery-item:hover .gallery-item-title { opacity: 1; }
+
+  /* lightbox */
+  #lightbox { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
+  #lightbox.open { display: flex; background: rgba(0,0,0,0.94); }
+  #lightbox img { max-width: 92vw; max-height: 92vh; object-fit: contain; opacity: 0; transform: scale(0.95); transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.34,1.3,0.64,1); }
+  #lightbox.open img { opacity: 1; transform: scale(1); }
+  .lightbox-close { position: absolute; top: 20px; right: 24px; background: none; border: none; color: rgba(255,255,255,0.4); font-family: 'Inter', sans-serif; font-size: 11px; cursor: pointer; letter-spacing: 0.05em; transition: color 0.2s; }
+  .lightbox-close:hover { color: #fff; }
+  .lightbox-title { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 300; letter-spacing: 0.05em; white-space: nowrap; }
+  .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.3); font-size: 24px; cursor: pointer; padding: 16px; transition: color 0.2s; user-select: none; }
+  .lightbox-nav:hover { color: rgba(255,255,255,0.9); }
+  .lightbox-prev { left: 12px; }
+  .lightbox-next { right: 12px; }
+
+  /* footer */
+  footer { padding: 28px 32px; border-top: 0.5px solid var(--border); display: flex; justify-content: center; align-items: center; }
+
+  /* contact modal */
+  #contact-modal { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
+  #contact-modal.open { display: flex; background: rgba(0,0,0,0.6); }
+  .contact-inner { position: relative; width: 320px; max-width: 90vw; background: var(--bg); border-radius: 14px; padding: 44px 32px 36px; display: flex; flex-direction: column; gap: 24px; transform: scale(0.9); opacity: 0; transition: transform 0.28s cubic-bezier(0.34,1.3,0.64,1), opacity 0.22s ease; border: 0.5px solid var(--border); box-shadow: 0 24px 64px rgba(0,0,0,0.18); }
+  #contact-modal.open .contact-inner { transform: scale(1); opacity: 1; }
+  .contact-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-muted); cursor: pointer; letter-spacing: 0.05em; transition: color 0.2s; padding: 4px; }
+  .contact-close:hover { color: var(--text); }
+  .contact-head { display: flex; flex-direction: column; gap: 4px; }
+  .contact-brand { display: flex; align-items: center; gap: 7px; }
+  .contact-brand-name { font-size: 20px; font-weight: 500; letter-spacing: -0.03em; }
+  .contact-brand-logo { width: 16px; height: 16px; stroke: var(--text); flex-shrink: 0; }
+  .contact-sub { font-size: 11px; color: var(--text-muted); font-weight: 300; }
+  .contact-links-list { display: flex; flex-direction: column; gap: 8px; }
+  .contact-link-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 0.5px solid var(--border); border-radius: 7px; text-decoration: none; color: var(--text); transition: background 0.18s, border-color 0.18s; cursor: pointer; }
+  .contact-link-row:hover { background: var(--card-hover); border-color: var(--text-muted); }
+  .contact-link-label { font-size: 12px; font-weight: 400; }
+  .contact-link-arrow { font-size: 11px; color: var(--text-muted); }
+  .contact-link-row.email-copied .contact-link-label { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    .header-right { gap: 14px; }
+    nav { gap: 12px; }
+    nav a { font-size: 11px; }
+    .gallery-wrap { padding: 12px; }
+    .gallery-item { flex: 0 1 calc(50% - 4px); }
+    footer { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="site-brand" onclick="navigateTo(event,'index.html')">
+    <span class="site-name">denny</span>
+    <svg class="site-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
+      <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
+    </svg>
+  </div>
+  <div class="header-right">
+    <nav>
+      <a href="index.html" onclick="navigateTo(event,'index.html')">commercials</a>
+      <a href="paintings.html" class="active">paintings</a>
+      <a href="lab.html" onclick="navigateTo(event,'lab.html')">lab</a>
+    </nav>
+    <button class="envelope-btn" onclick="openContact()" aria-label="contact">
+      <svg viewBox="0 0 24 24">
+        <rect x="2" y="4" width="20" height="16" rx="2.5"/>
+        <polyline points="2,6 12,13 22,6"/>
+      </svg>
+    </button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="toggle theme">
+      <div class="toggle-track"><div class="toggle-knob"></div></div>
+    </button>
+  </div>
+</header>
+
+<div class="gallery-wrap">
+  <div class="gallery-grid" id="gallery-grid"></div>
+</div>
+
+<footer>
+  <div class="site-brand" onclick="navigateTo(event,'index.html')">
+    <span class="site-name">denny</span>
+    <svg class="site-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
+      <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
+    </svg>
+  </div>
+</footer>
+
+<!-- lightbox -->
+<div id="lightbox" onclick="handleLightboxClick(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">close ✕</button>
+  <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)">‹</button>
+  <img id="lightbox-img" src="" alt="" />
+  <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1)">›</button>
+  <span class="lightbox-title" id="lightbox-title"></span>
+</div>
+
+<!-- contact modal -->
+<div id="contact-modal" onclick="handleContactClick(event)">
+  <div class="contact-inner">
+    <button class="contact-close" onclick="closeContact()">close ✕</button>
+    <div class="contact-head">
+      <div class="contact-brand">
+        <span class="contact-brand-name">denny</span>
+        <svg class="contact-brand-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
+          <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
+        </svg>
+      </div>
+      <p class="contact-sub" id="contact-sub"></p>
+    </div>
+    <div class="contact-links-list" id="contact-links-list"></div>
+  </div>
+</div>
+
+<script>
+var _paintings = [];
+var _lightboxIndex = 0;
+
+function navigateTo(e, href) {
+  e.preventDefault();
+  document.body.style.transition = 'opacity 0.2s ease';
+  document.body.style.opacity = '0';
+  setTimeout(function() { window.location.href = href; }, 200);
+}
+
+function toggleTheme() {
+  var t = document.documentElement.getAttribute("data-theme");
+  document.documentElement.setAttribute("data-theme", t === "dark" ? "light" : "dark");
+}
+
+function parseSettingsFromCSV(text) {
+  var settings = {};
+  var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
+  lines.forEach(function(l) {
+    if (l.trim().startsWith("setting:")) {
+      var parts = l.trim().slice(8).split(",");
+      if (parts.length >= 2) settings[parts[0].trim()] = parts[1].trim();
+    }
+  });
+  return settings;
+}
+
+function parsePaintingsCSV(text) {
+  var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
+  if (lines.length < 2) return [];
+  var headers = lines[0].split(",").map(function(h) { return h.trim(); });
+  return lines.slice(1).map(function(line) {
+    var values = line.split(",").map(function(v) { return v.trim(); });
+    var obj = {};
+    headers.forEach(function(h, i) { obj[h] = values[i] || ""; });
+    return obj;
+  }).filter(function(p) { return p.file; });
+}
+
+function renderGallery(paintings) {
+  var grid = document.getElementById("gallery-grid");
+  grid.innerHTML = "";
+  _paintings = paintings;
+  paintings.forEach(function(p, i) {
+    var item = document.createElement("div");
+    item.className = "gallery-item";
+    var img = document.createElement("img");
+    img.src = p.file;
+    img.alt = p.title || "";
+    item.appendChild(img);
+    if (p.title) {
+      var title = document.createElement("div");
+      title.className = "gallery-item-title";
+      title.textContent = p.title;
+      item.appendChild(title);
+    }
+    item.addEventListener("click", function() { openLightbox(i); });
+    grid.appendChild(item);
+    setTimeout(function() { item.classList.add("visible"); }, 30 + i * 40);
+  });
+}
+
+function openLightbox(index) {
+  _lightboxIndex = index;
+  var p = _paintings[index];
+  var lb = document.getElementById("lightbox");
+  var img = document.getElementById("lightbox-img");
+  var title = document.getElementById("lightbox-title");
+  img.src = p.file;
+  title.textContent = p.title || "";
+  lb.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function lightboxNav(dir) {
+  _lightboxIndex = (_lightboxIndex + dir + _paintings.length) % _paintings.length;
+  var p = _paintings[_lightboxIndex];
+  var img = document.getElementById("lightbox-img");
+  var title = document.getElementById("lightbox-title");
+  img.style.opacity = "0";
+  setTimeout(function() {
+    img.src = p.file;
+    title.textContent = p.title || "";
+    img.style.opacity = "";
+  }, 150);
+}
+
+function handleLightboxClick(e) {
+  if (e.target === document.getElementById("lightbox")) closeLightbox();
+}
+
+function openContact() {
+  document.getElementById("contact-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeContact() {
+  document.getElementById("contact-modal").classList.remove("open");
+  document.body.style.overflow = "";
+}
+function handleContactClick(e) { if (e.target === document.getElementById("contact-modal")) closeContact(); }
+
+function buildContactModal(s) {
+  var list = document.getElementById("contact-links-list");
+  var sub = document.getElementById("contact-sub");
+  if (!list) return;
+  list.innerHTML = "";
+  if (sub) sub.textContent = s.role || "";
+  if (s.imdb) {
+    var a = document.createElement("a");
+    a.className = "contact-link-row"; a.href = s.imdb; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = '<span class="contact-link-label">IMDb</span><span class="contact-link-arrow">↗</span>';
+    list.appendChild(a);
+  }
+  if (s.linkedin) {
+    var a = document.createElement("a");
+    a.className = "contact-link-row"; a.href = s.linkedin; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = '<span class="contact-link-label">LinkedIn</span><span class="contact-link-arrow">↗</span>';
+    list.appendChild(a);
+  }
+  if (s.email) {
+    var div = document.createElement("div");
+    div.className = "contact-link-row";
+    div.innerHTML = '<span class="contact-link-label" id="contact-email-label">' + s.email + '</span><span class="contact-link-arrow">copy</span>';
+    div.addEventListener("click", function() {
+      navigator.clipboard.writeText(s.email).catch(function(){});
+      div.classList.add("email-copied");
+      var lbl = document.getElementById("contact-email-label");
+      if (lbl) lbl.textContent = "copied!";
+      setTimeout(function() { div.classList.remove("email-copied"); if (lbl) lbl.textContent = s.email; }, 1800);
+    });
+    list.appendChild(div);
+  }
+}
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") {
+    if (document.getElementById("contact-modal").classList.contains("open")) closeContact();
+    else closeLightbox();
+  }
+  if (e.key === "ArrowLeft") lightboxNav(-1);
+  if (e.key === "ArrowRight") lightboxNav(1);
+});
+
+window.addEventListener("load", function() {
+  // load settings
+  fetch("projects.csv?nocache=" + Date.now())
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      var s = parseSettingsFromCSV(text);
+      var theme = (s.theme || "1").trim();
+      var toggle = document.querySelector(".theme-toggle");
+      if (theme === "2") { document.documentElement.setAttribute("data-theme","light"); if(toggle) toggle.style.display="none"; }
+      else if (theme === "3") { document.documentElement.setAttribute("data-theme","dark"); if(toggle) toggle.style.display="none"; }
+      buildContactModal(s);
+    }).catch(function(){});
+
+  // load paintings
+  fetch("paintings.csv?nocache=" + Date.now())
+    .then(function(r) { return r.text(); })
+    .then(function(text) { renderGallery(parsePaintingsCSV(text)); })
+    .catch(function() { renderGallery([]); });
+});
+</script>
+</body>
+</html>

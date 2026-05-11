@@ -18,7 +18,11 @@
     --border: rgba(238,235,228,0.08); --card-hover: #1c1b18; --thumb: #252320;
     --input-border: rgba(238,235,228,0.15); --input-bg: #1a1917; --modal-bg: #0e0d0c;
   }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; overflow-x: hidden; width: 100%; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; overflow-x: hidden; width: 100%; animation: pageFadeIn 0.25s ease both; }
+  @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+  nav { display: flex; gap: 20px; }
+  nav a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; letter-spacing: 0.01em; }
+  nav a:hover, nav a.active { color: var(--text); }
 
   /* lock */
   #lock { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: background 0.3s; overflow: hidden; }
@@ -260,6 +264,11 @@
       </svg>
     </div>
     <div class="header-right">
+      <nav>
+        <a href="index.html" class="active">commercials</a>
+        <a href="paintings.html" onclick="navigateTo(event,'paintings.html')">paintings</a>
+        <a href="lab.html" onclick="navigateTo(event,'lab.html')">lab</a>
+      </nav>
       <button class="envelope-btn" onclick="openContact()" aria-label="contact">
         <svg viewBox="0 0 24 24">
           <rect x="2" y="4" width="20" height="16" rx="2.5"/>
@@ -860,8 +869,16 @@ function processCSV(text) {
   }
 }
 
+function navigateTo(e, href) {
+  e.preventDefault();
+  document.body.style.transition = 'opacity 0.2s ease';
+  document.body.style.opacity = '0';
+  setTimeout(function() { window.location.href = href; }, 200);
+}
+
 function unlock() {
   if (window._stopNuke) window._stopNuke();
+  sessionStorage.setItem('unlocked', '1');
   document.getElementById("lock").classList.add("hidden");
   document.getElementById("site").classList.add("visible");
   if (window._cachedCSV) { processCSV(window._cachedCSV); }
