@@ -115,7 +115,11 @@
 
   /* grid */
   .grid-wrap { padding: 16px 28px 40px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 12px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .grid .card { flex: 0 1 320px; }
+  .grid-section-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); padding: 0 0 12px; opacity: 0.5; }
+  .grid-divider { height: 0.5px; background: var(--border); margin: 28px 0 24px; opacity: 0.5; }
+  .card--featured::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); z-index: 4; }
 
   /* card */
   .card { display: block; text-decoration: none; color: inherit; border-radius: 6px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: var(--thumb); cursor: pointer; width: 100%; min-width: 0; opacity: 0; transform: translateY(10px); transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
@@ -128,7 +132,7 @@
   .card-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to bottom, transparent 30%, rgba(10,9,8,0.55) 65%, rgba(10,9,8,0.82) 100%); }
   .card-body { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; padding: 18px 20px; display: flex; flex-direction: column; gap: 5px; }
   .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
-  .card-year { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 300; }
+  .card-year { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 300; display: none; /* hidden — remove to restore */ }
   .role-tag { position: absolute; top: 12px; right: 12px; z-index: 4; font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(255,255,255,0.9); background: rgba(200,75,47,0.75); padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
   .card-title { font-size: 16px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; color: #fff; }
   .card-desc { font-size: 11px; line-height: 1.6; color: rgba(255,255,255,0.6); font-weight: 300; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.3s; opacity: 0; }
@@ -264,14 +268,14 @@
   <div class="filter-bar filter-bar--role" id="role-filter-bar"></div>
 
   <div class="grid-wrap">
-    <div class="grid" id="grid"></div>
+    <div id="grid"></div>
   </div>
 
   <footer>
     <span class="footer-copy">© 2024 denny</span>
     <div class="footer-links">
-      <a href="https://www.imdb.com/name/nm13145444/" target="_blank" rel="noopener">imdb</a>
-      <a href="https://www.linkedin.com/in/dennyrych/" target="_blank" rel="noopener">linkedin</a>
+      <a href="#" id="footer-imdb" target="_blank" rel="noopener">imdb</a>
+      <a href="#" id="footer-linkedin" target="_blank" rel="noopener">linkedin</a>
       <span class="email-toggle" id="email-toggle" onclick="showEmail()">email</span>
     </div>
   </footer>
@@ -305,10 +309,21 @@ const PASSWORD = "1111";
 const PASSWORD_ENABLED = false; // true = включить пароль, false = отключить
 
 function parseCSV(text) {
+  var settings = {};
+  var projectLines = [];
   var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
-  if (lines.length < 2) return [];
-  var headers = lines[0].split(",").map(function(h) { return h.trim(); });
-  return lines.slice(1).map(function(line) {
+  lines.forEach(function(l) {
+    if (l.trim().startsWith("setting:")) {
+      var parts = l.trim().slice(8).split(",");
+      if (parts.length >= 2) settings[parts[0].trim()] = parts[1].trim();
+    } else {
+      projectLines.push(l);
+    }
+  });
+  window._settings = settings;
+  if (projectLines.length < 2) return [];
+  var headers = projectLines[0].split(",").map(function(h) { return h.trim(); });
+  return projectLines.slice(1).map(function(line) {
     var values = [], cur = "", inQuote = false;
     for (var i = 0; i < line.length; i++) {
       var ch = line[i];
@@ -322,6 +337,34 @@ function parseCSV(text) {
     headers.forEach(function(h, i) { obj[h] = values[i] || ""; });
     return obj;
   });
+}
+
+function applySettings(s) {
+  // theme
+  var theme = (s.theme || "1").trim();
+  var toggle = document.querySelector(".theme-toggle");
+  if (theme === "2") {
+    document.documentElement.setAttribute("data-theme", "light");
+    if (toggle) toggle.style.display = "none";
+  } else if (theme === "3") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    if (toggle) toggle.style.display = "none";
+  } else {
+    if (toggle) toggle.style.display = "";
+  }
+  // filters
+  var catBar = document.getElementById("cat-filter-bar");
+  if (catBar) catBar.style.display = (s.show_cat_filter === "false") ? "none" : "";
+  if (s.show_role_filter === "false") {
+    var roleBar = document.getElementById("role-filter-bar");
+    if (roleBar) roleBar.style.display = "none";
+  }
+  // links
+  var imdbEl = document.getElementById("footer-imdb");
+  var liEl = document.getElementById("footer-linkedin");
+  if (imdbEl && s.imdb) imdbEl.href = s.imdb;
+  if (liEl && s.linkedin) liEl.href = s.linkedin;
+  if (s.email) window._contactEmail = s.email;
 }
 
 function sorted(list) {
@@ -486,61 +529,113 @@ function closeModal() {
 function handleModalClick(e) { if (e.target === document.getElementById("modal")) closeModal(); }
 document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
 
+function makeCard(p) {
+  var card = document.createElement("div");
+  card.className = "card" + (p.priority ? " card--featured" : "");
+  var mediaHTML = "";
+  if (p.thumb) mediaHTML += '<img src="' + p.thumb + '" alt="' + p.title + '" />';
+  if (p.preview) mediaHTML += '<video src="' + p.preview + '" muted loop playsinline preload="auto"></video>';
+  if (!p.thumb && !p.preview) mediaHTML = '<div class="card-fallback"><div class="fallback-play"></div></div>';
+  card.innerHTML = mediaHTML + '<div class="card-overlay"></div>' + (p.role ? '<span class="role-tag">' + p.role + '</span>' : '') + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>' + (p.preview ? '<div class="scrub-bar"><div class="scrub-progress"></div></div>' : '');
+  return card;
+}
+
 function renderGrid(projects) {
-  var grid = document.getElementById("grid");
-  projects.forEach(function(p, i) {
-    var card = document.createElement("div");
-    card.className = "card";
-    var mediaHTML = "";
-    if (p.thumb) mediaHTML += '<img src="' + p.thumb + '" alt="' + p.title + '" />';
-    if (p.preview) mediaHTML += '<video src="' + p.preview + '" muted loop playsinline preload="auto"></video>';
-    if (!p.thumb && !p.preview) mediaHTML = '<div class="card-fallback"><div class="fallback-play"></div></div>';
-    card.innerHTML = mediaHTML + '<div class="card-overlay"></div>' + (p.role ? '<span class="role-tag">' + p.role + '</span>' : '') + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>' + (p.preview ? '<div class="scrub-bar"><div class="scrub-progress"></div></div>' : '');
-    if (p.preview) {
-      (function(c) {
-        var v = c.querySelector("video");
-        var bar = c.querySelector(".scrub-progress");
-        var rafId = null;
-        var pendingPct = null;
-        var isTouch = false;
-        function doSeek() {
-          rafId = null;
-          if (!v.duration || pendingPct === null) return;
-          var t = pendingPct * v.duration;
-          pendingPct = null;
-          if (isTouch && v.fastSeek) v.fastSeek(t);
-          else v.currentTime = t;
-        }
-        function scrubTo(clientX) {
-          var rect = c.getBoundingClientRect();
-          var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-          bar.style.width = (pct * 100) + "%";
-          pendingPct = pct;
-          if (!rafId) rafId = requestAnimationFrame(doSeek);
-        }
-        function scrubReset() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } pendingPct = null; v.pause(); v.currentTime = 0; bar.style.width = "0%"; }
-        c.addEventListener("mouseenter", function() { isTouch = false; v.pause(); });
-        c.addEventListener("mousemove", function(e) { scrubTo(e.clientX); });
-        c.addEventListener("mouseleave", scrubReset);
-        c.addEventListener("touchstart", function(e) { isTouch = true; v.pause(); c.classList.add("touch-active"); e.preventDefault(); }, { passive: false });
-        c.addEventListener("touchmove", function(e) { scrubTo(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
-        c.addEventListener("touchend", function() { scrubReset(); c.classList.remove("touch-active"); });
-      })(card);
+  var gridWrap = document.getElementById("grid").parentElement;
+  var featured = projects.filter(function(p) { return p.priority; });
+  var regular = projects.filter(function(p) { return !p.priority; });
+  var allCards = [];
+
+  function appendSection(container, list, offset) {
+    list.forEach(function(p, i) {
+      var card = makeCard(p);
+      if (p.link) { card.addEventListener("click", function() { window.open(p.link,"_blank","noopener"); }); }
+      else if (p.page || p.video) { (function(p){ card.addEventListener("click", function(){ openModal(p); }); })(p); }
+      if (p.preview) attachScrub(card);
+      container.appendChild(card);
+      allCards.push({ card: card, delay: 30 + (offset + i) * 40 });
+    });
+  }
+
+  var mainGrid = document.getElementById("grid");
+  mainGrid.innerHTML = "";
+
+  if (featured.length > 0) {
+    var labelFeatured = document.createElement("div");
+    labelFeatured.className = "grid-section-label";
+    labelFeatured.textContent = "Selected Work";
+    mainGrid.appendChild(labelFeatured);
+
+    var featuredGrid = document.createElement("div");
+    featuredGrid.className = "grid";
+    mainGrid.appendChild(featuredGrid);
+    appendSection(featuredGrid, featured, 0);
+
+    if (regular.length > 0) {
+      var divider = document.createElement("div");
+      divider.className = "grid-divider";
+      mainGrid.appendChild(divider);
+
+      var labelAll = document.createElement("div");
+      labelAll.className = "grid-section-label";
+      labelAll.textContent = "All Work";
+      mainGrid.appendChild(labelAll);
+
+      var regularGrid = document.createElement("div");
+      regularGrid.className = "grid";
+      mainGrid.appendChild(regularGrid);
+      appendSection(regularGrid, regular, featured.length);
     }
-    if (p.link) { card.addEventListener("click", function() { window.open(p.link,"_blank","noopener"); }); }
-    else if (p.page || p.video) { (function(p){ card.addEventListener("click", function(){ openModal(p); }); })(p); }
-    grid.appendChild(card);
-    setTimeout(function() { card.classList.add("visible"); }, 30 + i * 40);
+  } else {
+    var onlyGrid = document.createElement("div");
+    onlyGrid.className = "grid";
+    mainGrid.appendChild(onlyGrid);
+    appendSection(onlyGrid, projects, 0);
+  }
+
+  allCards.forEach(function(item) {
+    setTimeout(function() { item.card.classList.add("visible"); }, item.delay);
   });
 }
 
+function attachScrub(c) {
+  var v = c.querySelector("video");
+  var bar = c.querySelector(".scrub-progress");
+  var rafId = null;
+  var pendingPct = null;
+  var isTouch = false;
+  function doSeek() {
+    rafId = null;
+    if (!v.duration || pendingPct === null) return;
+    var t = pendingPct * v.duration;
+    pendingPct = null;
+    if (isTouch && v.fastSeek) v.fastSeek(t);
+    else v.currentTime = t;
+  }
+  function scrubTo(clientX) {
+    var rect = c.getBoundingClientRect();
+    var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    bar.style.width = (pct * 100) + "%";
+    pendingPct = pct;
+    if (!rafId) rafId = requestAnimationFrame(doSeek);
+  }
+  function scrubReset() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } pendingPct = null; v.pause(); v.currentTime = 0; bar.style.width = "0%"; }
+  c.addEventListener("mouseenter", function() { isTouch = false; v.pause(); });
+  c.addEventListener("mousemove", function(e) { scrubTo(e.clientX); });
+  c.addEventListener("mouseleave", scrubReset);
+  c.addEventListener("touchstart", function(e) { isTouch = true; v.pause(); c.classList.add("touch-active"); e.preventDefault(); }, { passive: false });
+  c.addEventListener("touchmove", function(e) { scrubTo(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
+  c.addEventListener("touchend", function() { scrubReset(); c.classList.remove("touch-active"); });
+}
+
 function showEmail() {
+  var email = window._contactEmail || "email";
   var el = document.getElementById("email-toggle");
   if (el.classList.contains("revealed")) {
-    navigator.clipboard.writeText("deniskarucha@gmail.com").catch(function(){});
+    navigator.clipboard.writeText(email).catch(function(){});
     el.textContent = "copied!";
-    setTimeout(function(){ el.textContent = "deniskarucha@gmail.com"; }, 1500);
-  } else { el.classList.add("revealed"); el.textContent = "deniskarucha@gmail.com"; }
+    setTimeout(function(){ el.textContent = email; }, 1500);
+  } else { el.classList.add("revealed"); el.textContent = email; }
 }
 
 function toggleTheme() {
@@ -556,6 +651,7 @@ function unlock() {
     .then(function(r){ return r.text(); })
     .then(function(text){
       window._allProjects = sorted(parseCSV(text));
+      applySettings(window._settings || {});
       renderHero(window._allProjects);
       renderGrid(window._allProjects);
       var roles = [];

@@ -1,5 +1,17 @@
 # ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,
-# DENNY — PROJECTS,,,,,,,,,,,,,,,
+# DENNY — SETTINGS & PROJECTS,,,,,,,,,,,,,,,
+# ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,
+#,,,,,,,,,,,,,,,
+# НАСТРОЙКИ САЙТА (строки вида  setting:ключ,значение),,,,,,,,,,,,,,
+# theme            — 1: переключатель темы виден / 2: всегда светлая / 3: всегда тёмная,,,,,,,,,,,,,,,
+# show_cat_filter  — true / false,,,,,,,,,,,,,,,
+# show_role_filter — true / false,,,,,,,,,,,,,,,
+setting:theme,2,,,,,,,,,,,,,,
+setting:show_cat_filter,false,,,,,,,,,,,,,,
+setting:show_role_filter,false,,,,,,,,,,,,,,
+setting:imdb,https://www.imdb.com/name/nm13145444/,,,,,,,,,,,,,,
+setting:linkedin,https://www.linkedin.com/in/dennyrych/,,,,,,,,,,,,,,
+setting:email,deniskarucha@gmail.com,,,,,,,,,,,,,,
 # ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,
 # КАК ДОБАВИТЬ ПРОЕКТ:,,,,,,,,,,,,,,,
 # 1. Добавь новую строку ниже строки с заголовками,,,,,,,,,,,,,,,
@@ -28,10 +40,10 @@ title,year,date,role,studio,category,featured,desc,details,thumb,preview,video,b
 Erik Stoneheart,2021,2021-06,Compositing Artist,Snow Dog,feature film,,best of 2024. compositing work across commercial and film projects.,,thumbs/erik_1k.jpg,,,,https://www.imdb.com/title/tt20247118/,,
 Kremin,2021,2021-07,Compositing Artist,Snow Dog,feature film,,"short description of the project. what you did, what was interesting.",Long description of the project. Write as much as you want here.,thumbs/kremin_1k.jpg,,,breakdown/breakdown-one.webm,https://shorturl.at/zdXR8,,
 Mission Sky,2021,2021-08,Compositing Artist,Snow Dog,feature film,,short description of the project. keep it brief and specific.,,thumbs/nebo1_1k.jpg,,,,https://www.imdb.com/title/tt15815090/,,
-Mavka: The Forest Song  ,2023,2023-03,Compositing Artist,Animagrad,animation,,short description of the project. one or two sentences maximum.,,thumbs/mavka_1k.jpg,,,,,pages/template.html,2
+Mavka: The Forest Song  ,2023,2023-03,Compositing Artist,Animagrad,animation,,short description of the project. one or two sentences maximum.,,thumbs/mavka_1k.jpg,,,,,pages/template.html,1
 Noa Kirel – Unicorn,2023,2023-04,Compositing Artist,Raconteur,music video,,,,thumbs/unicorn_1k.jpg,,,,,,
-The Dragon Prince: Season 5,2023,2023-05,LRC,Bardel Animation ,animation,,,,thumbs/dragon_1k.jpg,,,,,,1
-Sausage Party: Foodtopia,2023,2023-08,Lighting Lead,Bardel Animation ,animation,,,,thumbs/foodtopia_1k.jpg,,,,,,3
+The Dragon Prince: Season 5,2023,2023-05,LRC,Bardel Animation ,animation,,,,thumbs/dragon_1k.jpg,,,,,,3
+Sausage Party: Foodtopia,2023,2023-08,Lighting Lead,Bardel Animation ,animation,,,,thumbs/foodtopia_1k.jpg,,,,,,2
 Eden Golan - Hurricane,2024,2024-04,Compositing Artist,Raconteur,music video,,,,thumbs/huraccane_1k.jpg,,,,,,
 Within Temptation – A fool's parade,2024,2024-05,Compositing Artist,Raconteur,music video,,,,thumbs/within_1k.jpg,,,,,,
 Noga Erez - PC People ft. ROUSSO,2024,2024-06,Compositing Artist,Raconteur,music video,,,,thumbs/noga_1k.jpg,,,,,,
@@ -45,7 +57,7 @@ Oschad bank Fashion,2025,2025-04,Comp Lead,Raconteur,commercial,,,,thumbs/fashio
 Mavka: Aquapark,2025,2025-05,Compositing Artist,Animagrad,commercial,,,,thumbs/aquapark_1k.jpg,,,,,,
 Loboda – Visuals,2025,2025-06,Compositing Artist,Raconteur,music video,,,,thumbs/loboda_1k.jpg,,,,,,
 Bney Aish – City,2025,2025-07,Comp Lead,Raconteur,commercial,,,,thumbs/piano_1k.jpg,,,,,,
-Nich – Latex Fauna,2025,2025-08,Comp Lead,Raconteur,music video,,,,thumbs/nich_1k.jpg,preview/brakedown_V025.webm,video/nich.webm,,,,4
+Nich – Latex Fauna,2025,2025-08,Comp Lead,Raconteur,music video,,,,thumbs/nich_1k.jpg,preview/brakedown_V025.webm,video/nich.webm,,,,
 Anna Zak – Hi Ahuva,2025,2025-09,Comp Lead,Raconteur,music video,,,,thumbs/zak_1k.jpg,,,,,,
 Noa Kirel – Bad Apple,2025,2025-10,Comp Lead,Raconteur,music video,,,,thumbs/bad_apple_1k.jpg,,,,,,
 Noa Kirel - Prime Minister,2025,2025-11,Compositing Artist,Raconteur,music video,,,,thumbs/minister_1k.jpg,,,,,,
