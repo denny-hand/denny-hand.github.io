@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>denny</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 40 40' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -126,10 +126,9 @@
   .grid .card { flex: 0 1 320px; }
   .grid-section-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); padding: 0 0 12px; opacity: 0.5; }
   .grid-divider { height: 0.5px; background: var(--border); margin: 28px 0 24px; opacity: 0.5; }
-  .card--featured::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); z-index: 4; }
 
   /* card */
-  .card { display: block; text-decoration: none; color: inherit; border-radius: 6px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: var(--thumb); cursor: pointer; width: 100%; min-width: 0; opacity: 0; transform: translateY(10px); transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+  .card { display: block; text-decoration: none; color: inherit; border-radius: 0; overflow: hidden; position: relative; aspect-ratio: 3/2; background: var(--thumb); cursor: pointer; width: 100%; min-width: 0; opacity: 0; transform: translateY(10px); transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
   .card.visible { opacity: 1; transform: translateY(0); }
   .card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.18); transform: translateY(-3px); }
   .card img:not(.card-logo), .card video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
@@ -140,13 +139,14 @@
   .card-body { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; padding: 18px 20px; display: flex; flex-direction: column; gap: 5px; }
   .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
   .card-year { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 300; display: none; /* hidden — remove to restore */ }
-  .role-tag { position: absolute; top: 12px; right: 12px; z-index: 4; font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(255,255,255,0.9); background: rgba(200,75,47,0.75); padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
-  .card-title { font-size: 16px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; color: #fff; }
+  .role-tag { position: absolute; top: 12px; right: 12px; z-index: 4; font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(255,255,255,0.45); background: none; padding: 3px 0; white-space: nowrap; transition: color 0.2s; }
+  .card:hover .role-tag { color: rgba(255,255,255,1); }
+  .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; font-weight: 400; letter-spacing: 0.04em; line-height: 1.1; color: #fff; }
   .card-desc { font-size: 11px; line-height: 1.6; color: rgba(255,255,255,0.6); font-weight: 300; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.3s; opacity: 0; }
   .card:hover .card-desc { max-height: 60px; opacity: 1; }
   .scrub-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; z-index: 5; background: rgba(255,255,255,0.15); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
   .card:hover .scrub-bar { opacity: 1; }
-  .scrub-progress { height: 100%; width: 0%; background: var(--accent); }
+  .scrub-progress { height: 100%; width: 0%; background: rgba(255,255,255,0.6); }
   .card-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
   .fallback-play { width: 34px; height: 34px; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .fallback-play::after { content: ''; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid rgba(255,255,255,0.4); margin-left: 3px; }
@@ -401,6 +401,13 @@ function applySettings(s) {
     if (toggle) toggle.style.display = "none";
   } else {
     if (toggle) toggle.style.display = "";
+  }
+  // card aspect ratio
+  var rw = parseFloat(s.card_ratio_w), rh = parseFloat(s.card_ratio_h);
+  if (rw > 0 && rh > 0) {
+    var style = document.getElementById("dynamic-card-ratio");
+    if (!style) { style = document.createElement("style"); style.id = "dynamic-card-ratio"; document.head.appendChild(style); }
+    style.textContent = ".card { aspect-ratio: " + rw + " / " + rh + " !important; }";
   }
   // filters
   var catBar = document.getElementById("cat-filter-bar");

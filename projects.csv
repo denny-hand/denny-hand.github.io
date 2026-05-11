@@ -11,11 +11,13 @@
 setting:theme,2,,,,,,,,,,,,,,,
 setting:show_cat_filter,false,,,,,,,,,,,,,,,
 setting:show_role_filter,false,,,,,,,,,,,,,,,
-setting:password_enabled,false,,,,,,,,,,,,,,,
+setting:password_enabled,true,,,,,,,,,,,,,,,
 setting:password,1234,,,,,,,,,,,,,,,
 setting:imdb,https://www.imdb.com/name/nm13145444/,,,,,,,,,,,,,,,
 setting:linkedin,https://www.linkedin.com/in/dennyrych/,,,,,,,,,,,,,,,
 setting:email,deniskarucha@gmail.com,,,,,,,,,,,,,,,
+setting:card_ratio_w,3,,,,,,,,,,,,,,,
+setting:card_ratio_h,2,,,,,,,,,,,,,,,
 # ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,,
 # КАК ДОБАВИТЬ ПРОЕКТ:,,,,,,,,,,,,,,,,
 # 1. Добавь новую строку ниже строки с заголовками,,,,,,,,,,,,,,,,
@@ -41,34 +43,34 @@ setting:email,deniskarucha@gmail.com,,,,,,,,,,,,,,,
 # priority  — число 1/2/3 фиксирует позицию. Если пусто — сортировка по date/year,,,,,,,,,,,,,,,,
 # ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,,
 title,year,date,role,studio,category,featured,desc,details,thumb,preview,video,breakdown,link,page,priority,logo
-Erik Stoneheart,2021,2021-06,Compositing Artist,Snow Dog,feature film,,best of 2024. compositing work across commercial and film projects.,,thumbs/erik_1k.jpg,preview/erik.webm,,,https://www.imdb.com/title/tt20247118/,,,logo/snowdog.png
+Erik Stoneheart,2021,2021-06,Compositing Artist,Snow Dog,feature film,,best of 2024. compositing work across commercial and film projects.,,thumbs/erik_1k.jpg,preview/erik.webm,,,https://www.imdb.com/title/tt20247118/,,7,logo/snowdog.png
 Kremin,2021,2021-07,Compositing Artist,Snow Dog,feature film,,"short description of the project. what you did, what was interesting.",Long description of the project. Write as much as you want here.,thumbs/kremin_1k.jpg,,,breakdown/breakdown-one.webm,https://shorturl.at/zdXR8,,,logo/snowdog.png
 Mission Sky,2021,2021-08,Compositing Artist,Snow Dog,feature film,,short description of the project. keep it brief and specific.,,thumbs/nebo1_1k.jpg,,,,https://www.imdb.com/title/tt15815090/,,,logo/snowdog.png
-Mavka: The Forest Song  ,2023,2023-03,Compositing Artist,Animagrad,animation,,short description of the project. one or two sentences maximum.,,thumbs/mavka_1k.jpg,preview/mavka.webm,,,,pages/mavka1.svg,1,logo/Animagrad_logo.png
+Mavka: The Forest Song  ,2023,2023-03,Compositing Artist,Animagrad,animation,,short description of the project. one or two sentences maximum.,,thumbs/mavka_1k.jpg,preview/mavka.webm,,,,pages/mavka1.svg,3,logo/Animagrad_logo.png
 Noa Kirel – Unicorn,2023,2023-04,Compositing Artist,Raconteur,music video,,,,thumbs/unicorn_1k.jpg,,,,,,,logo/raconteur.png
-The Dragon Prince: Season 5,2023,2023-05,LRC,Bardel Animation ,animation,,,,thumbs/dragon_1k.jpg,,,,,,3,logo/Netflix.svg
-Sausage Party: Foodtopia,2023,2023-08,Lighting Lead,Bardel Animation ,animation,,,,thumbs/foodtopia_1k.jpg,,,,,,2,logo/Amazon_Prime.svg
-Eden Golan - Hurricane,2024,2024-04,Compositing Artist,Raconteur,music video,,,,thumbs/huraccane_1k.jpg,,,,,,,logo/raconteur.png
-Within Temptation – A fool's parade,2024,2024-05,Compositing Artist,Raconteur,music video,,,,thumbs/within_1k.jpg,,,,,,,logo/raconteur.png
-Noga Erez - PC People ft. ROUSSO,2024,2024-06,Compositing Artist,Raconteur,music video,,,,thumbs/noga_1k.jpg,,,,,,,logo/raconteur.png
+The Dragon Prince: Season 5,2023,2023-05,LRC,Bardel Animation ,animation,,,,thumbs/dragon_1k.jpg,,,,https://www.imdb.com/title/tt8688814/episodes/?season=5,,1,logo/Netflix.svg
+Sausage Party: Foodtopia,2023,2023-08,Lighting Lead,Bardel Animation ,animation,,,,thumbs/foodtopia_1k.jpg,,,,https://www.imdb.com/title/tt23036426/,,2,logo/Amazon_Prime.svg
+Eden Golan - Hurricane,2024,2024-04,Compositing Artist,Raconteur,music video,,,,thumbs/huraccane_1k.jpg,,https://www.youtube.com/watch?v=lJYn09tuPw4,,,,,logo/raconteur.png
+Within Temptation – A fool's parade,2024,2024-05,Compositing Artist,Raconteur,music video,,,,thumbs/within_1k.jpg,,https://www.youtube.com/watch?v=fBWeMivsraA,,,,,logo/raconteur.png
+Noga Erez - PC People ft. ROUSSO,2024,2024-06,Compositing Artist,Raconteur,music video,,,,thumbs/noga_1k.jpg,,https://www.youtube.com/watch?v=K2630OFpX4c,,,,,logo/raconteur.png
 Dorofeeva – Kolyskova,2024,2024-08,Compositing Artist,Raconteur,music video,,,,thumbs/kolyskova_1k.jpg,,,,,,,logo/raconteur.png
-Nasha Faita - Trailer (2024),2024,2024-09,Comp Lead,Animagrad,2d animation,,,,thumbs/faita_1k.jpg,,,,,,,logo/Animagrad_logo.png
-Roshen Commercial Lacmi 2024,2024,2024-10,Compositing Artist,M1X,commercial,,,,thumbs/lacmi_1k.jpg,,breakdown/lacmi.webm,,,,,
+Nasha Faita - Trailer (2024),2024,2024-09,Comp Lead,Animagrad,2d animation,,,,thumbs/faita_1k.jpg,,https://www.youtube.com/watch?v=0N9LvDLXxAU,,,,,logo/Animagrad_logo.png
+Roshen Commercial Lacmi 2024,2024,2024-10,Compositing Artist,M1X,commercial,,,,thumbs/lacmi_1k.jpg,,breakdown/lacmi.webm,,,,,logo/m1x.png
 Robocats Commercial 2024,2025,2025-01,Compositing Artist,Animagrad,commercial,,,,thumbs/robocats_1k.jpg,,,,,,,logo/Animagrad_logo.png
 Oschad bank Ice,2025,2025-02,Comp Lead,Raconteur,commercial,,,,thumbs/ice_1k.jpg,,,,,,,logo/raconteur.png
 Oschad bank Strings,2025,2025-03,Comp Lead,Raconteur,commercial,,,,thumbs/strings_1k.jpg,,,,,,,logo/raconteur.png
 Oschad bank Fashion,2025,2025-04,Comp Lead,Raconteur,commercial,,,,thumbs/fashion_1k.jpg,,,,,,,logo/raconteur.png
-Mavka: Aquapark,2025,2025-05,Compositing Artist,Animagrad,commercial,,,,thumbs/aquapark_1k.jpg,,,,,,,logo/Animagrad_logo.png
-Loboda – Visuals,2025,2025-06,Compositing Artist,Raconteur,music video,,,,thumbs/loboda_1k.jpg,,,,,,,logo/raconteur.png
-Bney Aish – City,2025,2025-07,Comp Lead,Raconteur,commercial,,,,thumbs/piano_1k.jpg,,,,,,,logo/raconteur.png
+Mavka: Aquapark,2025,2025-05,Compositing Artist,Animagrad,commercial,,,,thumbs/aquapark_1k.jpg,,https://www.youtube.com/watch?v=8g1jHWbFh-c,,,,,logo/Animagrad_logo.png
+Loboda – Visuals,2025,2025-06,Compositing Artist,Raconteur,music video,,,,thumbs/loboda_1k.jpg,,https://www.youtube.com/watch?v=gjScw5ZlZMs,,,,,logo/raconteur.png
+Bney Aish – City,2025,2025-07,Comp Lead,Raconteur,commercial,,,,thumbs/piano_1k.jpg,,,,,,6,logo/raconteur.png
 Nich – Latex Fauna,2025,2025-08,Comp Lead,Raconteur,music video,,,,thumbs/nich_1k.jpg,preview/brakedown_V025.webm,video/nich.webm,,,,4,logo/raconteur.png
-Anna Zak – Hi Ahuva,2025,2025-09,Comp Lead,Raconteur,music video,,,,thumbs/zak_1k.jpg,,,,,,,logo/raconteur.png
-Noa Kirel – Bad Apple,2025,2025-10,Comp Lead,Raconteur,music video,,,,thumbs/bad_apple_1k.jpg,,,,,,,logo/raconteur.png
-Noa Kirel - Prime Minister,2025,2025-11,Compositing Artist,Raconteur,music video,,,,thumbs/minister_1k.jpg,,,,,,,logo/raconteur.png
-Unit City – Latex Fauna,2025,2025-12,Compositing Artist,Raconteur,music video,,,,thumbs/unit_1k.jpg,,,,,,,logo/raconteur.png
-The Little Prince SOVA,2025,2025-13,Compositing Artist,Animagrad,commercial,,,,thumbs/sova_1k.jpg,,,,,,,logo/Animagrad_logo.png
-Dorofeeva – Yaponia,2026,2026-01,Compositing Artist,Raconteur,music video,,,,thumbs/yaponia_1k.jpg,,,,,,,logo/raconteur.png
+Anna Zak – Hi Ahuva,2025,2025-09,Comp Lead,Raconteur,music video,,,,thumbs/zak_1k.jpg,,https://www.youtube.com/watch?v=DjqfjqFd8_8,,,,9,logo/raconteur.png
+Noa Kirel – Bad Apple,2025,2025-10,Comp Lead,Raconteur,music video,,,,thumbs/bad_apple_1k.jpg,,https://youtu.be/dPvIK15IR8A?si=tV8Jxv66VtatnGYx,,,,5,logo/raconteur.png
+Noa Kirel - Prime Minister,2025,2025-11,Compositing Artist,Raconteur,music video,,,,thumbs/minister_1k.jpg,,https://www.youtube.com/watch?v=1zoluQaw81I,,,,,logo/raconteur.png
+Unit City – Latex Fauna,2025,2025-12,Compositing Artist,Raconteur,music video,,,,thumbs/unit_1k.jpg,,https://www.youtube.com/watch?v=V8RxznRmIso,,,,,logo/raconteur.png
+The Little Prince SOVA,2025,2025-13,Compositing Artist,Animagrad,commercial,,,,thumbs/sova_1k.jpg,,https://www.youtube.com/watch?v=D-2aFSqZ03o,,,,,logo/Animagrad_logo.png
+Dorofeeva – Yaponia,2026,2026-01,Compositing Artist,Raconteur,music video,,,,thumbs/yaponia_1k.jpg,,https://www.youtube.com/watch?v=nnvHQe2HZcQ,,,,,logo/raconteur.png
 Etnodim – Visual Expirience 3/5,2026,2026-02,Compositing Artist,Raconteur,commercial,,,,thumbs/horse_1k.jpg,,video/horse.webm,,,,,logo/raconteur.png
 Etnodim – Visual Expirience 4/5,2026,2026-03,Compositing Artist,Raconteur,commercial,,,,thumbs/acrobat_1k.jpg,,,,https://www.instagram.com/p/DXTzdUXDFeN/,,,logo/raconteur.png
 Etnodim – Visual Expirience 5/5,2026,2026-04,Compositing Artist,Raconteur,commercial,,,,thumbs/mushroom_1k.jpg ,,,,https://www.instagram.com/p/DXoG4zaDBtT/,,,logo/raconteur.png
-Moshynska Commercial 2026,2026,2026-05,Compositing Artist,Raconteur,commercial,,,,thumbs/morsh_1k.jpg,,,,,,,logo/raconteur.png
+Moshynska Commercial 2026,2026,2026-05,Compositing Artist,Raconteur,commercial,,,,thumbs/morsh_1k.jpg,,https://www.youtube.com/watch?v=wJ9FdxT-lX4,,,,8,logo/raconteur.png
