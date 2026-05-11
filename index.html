@@ -517,10 +517,22 @@ function openSVGModal(p, inner) {
 
           var vid = document.createElement("video");
           vid.src = src;
-          vid.controls = true;
           vid.muted = true;
           vid.autoplay = true;
           vid.loop = true;
+          vid.setAttribute("playsinline", "");
+          vid.setAttribute("webkit-playsinline", "");
+          var isMobileDevice = ('ontouchstart' in window);
+          if (isMobileDevice) {
+            vid.controls = false;
+            vid.style.cursor = "pointer";
+            vid.addEventListener("click", function() {
+              if (vid.webkitEnterFullscreen) vid.webkitEnterFullscreen();
+              else if (vid.requestFullscreen) vid.requestFullscreen();
+            });
+          } else {
+            vid.controls = true;
+          }
           vid.style.cssText = "position:absolute;object-fit:cover;"
             + "left:" + (elRect.left - cRect.left) + "px;"
             + "top:" + (elRect.top - cRect.top) + "px;"
