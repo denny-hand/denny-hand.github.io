@@ -327,71 +327,102 @@
   /* ── hero split ── */
   #hero-split {
     position: fixed; inset: 0; z-index: 95; display: none;
-    background: #0a0908; overflow: hidden;
+    background: #080706; overflow: hidden;
   }
-  #hero-split.visible { display: flex; }
+  #hero-split.visible { display: block; }
   #hero-split.fade-out { animation: heroFadeOut 0.5s ease forwards; }
   @keyframes heroFadeOut { to { opacity: 0; pointer-events: none; } }
 
   .hero-panel {
-    flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
+    position: absolute; inset: 0;
     cursor: pointer; overflow: hidden;
-    transition: flex 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: clip-path 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  #hero-split:has(.hero-panel--reel:hover) .hero-panel--reel    { flex: 1.02; }
-  #hero-split:has(.hero-panel--reel:hover) .hero-panel--projects { flex: 0.98; }
-  #hero-split:has(.hero-panel--projects:hover) .hero-panel--reel { flex: 0.98; }
-  #hero-split:has(.hero-panel--projects:hover) .hero-panel--projects { flex: 1.02; }
-
-  .hero-panel--reel     { background: #0c0b0a; }
-  .hero-panel--projects { background: #141210; }
+  .hero-panel--reel {
+    background: #0c0b0a;
+    clip-path: polygon(0 0, 60% 0, 40% 100%, 0 100%);
+  }
+  .hero-panel--projects {
+    background: #111009;
+    clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%);
+  }
+  #hero-split:has(.hero-panel--reel:hover) .hero-panel--reel    { clip-path: polygon(0 0, 62% 0, 42% 100%, 0 100%); }
+  #hero-split:has(.hero-panel--reel:hover) .hero-panel--projects { clip-path: polygon(62% 0, 100% 0, 100% 100%, 42% 100%); }
+  #hero-split:has(.hero-panel--projects:hover) .hero-panel--reel { clip-path: polygon(0 0, 58% 0, 38% 100%, 0 100%); }
+  #hero-split:has(.hero-panel--projects:hover) .hero-panel--projects { clip-path: polygon(58% 0, 100% 0, 100% 100%, 38% 100%); }
 
   #hero-bg-video {
     position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; opacity: 0.28; pointer-events: none;
+    object-fit: cover; opacity: 0.3; pointer-events: none;
   }
-  .hero-divider {
-    width: 1px; background: rgba(255,255,255,0.08); flex-shrink: 0; position: relative; z-index: 1;
-    transition: opacity 0.3s;
-  }
-  #hero-split:has(.hero-panel:hover) .hero-divider { opacity: 0; }
+  .hero-divider { display: none; }
 
+  /* content: centered in each diagonal half */
   .hero-panel-inner {
-    position: relative; z-index: 1; display: flex; flex-direction: column;
-    align-items: center; gap: 18px; pointer-events: none;
-    transition: transform 0.3s ease, opacity 0.3s;
+    position: absolute; top: 50%;
+    display: flex; flex-direction: column; align-items: center; gap: 24px;
+    pointer-events: none; transition: opacity 0.3s;
   }
-  .hero-panel--projects .hero-panel-inner { opacity: 0.5; }
-  .hero-panel--projects:hover .hero-panel-inner { opacity: 1; }
-  .hero-panel--reel .hero-panel-inner { opacity: 0.7; }
+  .hero-panel--reel .hero-panel-inner {
+    left: 25%; transform: translate(-50%, -50%);
+    opacity: 0.7;
+  }
   .hero-panel--reel:hover .hero-panel-inner { opacity: 1; }
+  .hero-panel--projects .hero-panel-inner {
+    left: 75%; transform: translate(-50%, -50%);
+    opacity: 0.45;
+  }
+  .hero-panel--projects:hover .hero-panel-inner { opacity: 1; }
+
+  /* thumbnails mosaic */
+  .hero-thumbs {
+    position: absolute; inset: 0;
+    overflow: hidden; pointer-events: none;
+    opacity: 0.28;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .hero-row {
+    flex-shrink: 0; height: 136px;
+    overflow: hidden; white-space: nowrap;
+  }
+  .hero-row-track {
+    display: inline-flex; gap: 3px; height: 100%;
+  }
+  .hero-row--left  .hero-row-track { animation: heroRowLeft  var(--spd, 28s) linear infinite; }
+  .hero-row--right .hero-row-track { animation: heroRowRight var(--spd, 28s) linear infinite; }
+  @keyframes heroRowLeft  { from { transform: translateX(0);    } to { transform: translateX(-50%); } }
+  @keyframes heroRowRight { from { transform: translateX(-50%); } to { transform: translateX(0);    } }
+  .hero-thumb-item {
+    height: 100%; aspect-ratio: 3/2; flex-shrink: 0;
+    background: #222 center/cover no-repeat;
+  }
 
   .hero-play-icon {
-    width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+    width: 80px; height: 80px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);
     display: flex; align-items: center; justify-content: center; color: #fff;
     transition: border-color 0.3s, transform 0.3s;
   }
   .hero-panel--reel:hover .hero-play-icon {
-    border-color: rgba(255,255,255,0.7); transform: scale(1.08);
+    border-color: rgba(255,255,255,0.8); transform: scale(1.06);
   }
-  .hero-play-icon svg { width: 20px; height: 20px; margin-left: 3px; }
+  .hero-play-icon svg { width: 28px; height: 28px; margin-left: 5px; }
 
   .hero-arrow-icon {
-    width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+    width: 80px; height: 80px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);
     display: flex; align-items: center; justify-content: center; color: #fff;
     transition: border-color 0.3s, transform 0.3s;
   }
   .hero-panel--projects:hover .hero-arrow-icon {
-    border-color: rgba(255,255,255,0.7); transform: translateX(4px);
+    border-color: rgba(255,255,255,0.8); transform: translateX(5px);
   }
-  .hero-arrow-icon svg { width: 20px; height: 20px; }
+  .hero-arrow-icon svg { width: 28px; height: 28px; }
 
   .hero-label {
-    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase;
     color: rgba(255,255,255,0.9); font-weight: 400;
-    transition: letter-spacing 0.3s;
+    transition: letter-spacing 0.25s;
   }
-  .hero-panel:hover .hero-label { letter-spacing: 0.2em; }
+  .hero-panel:hover .hero-label { letter-spacing: 0.24em; }
 
   /* ── reel modal ── */
   #reel-modal {
@@ -432,7 +463,7 @@
 </div>
 
 <!-- ── hero split screen ── -->
-<div id="hero-split">
+<div id="hero-split" style="display:none">
   <div class="hero-panel hero-panel--reel" id="hero-reel-panel" onclick="openHeroReel()">
     <video id="hero-bg-video" autoplay muted loop playsinline></video>
     <div class="hero-panel-inner">
@@ -444,6 +475,7 @@
   </div>
   <div class="hero-divider"></div>
   <div class="hero-panel hero-panel--projects" onclick="dismissHeroSplit()">
+    <div class="hero-thumbs" id="hero-thumbs"></div>
     <div class="hero-panel-inner">
       <div class="hero-arrow-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -1213,6 +1245,7 @@ function attachScrub(c) {
 function processCSV(text) {
   window._allProjects = sorted(parseCSV(text));
   applySettings(window._settings || {});
+  populateHeroThumbs(window._allProjects);
   renderHero(window._allProjects);
   renderGrid(window._allProjects);
   if (window._pendingModal && window._pendingModal.section === 'commercials') {
@@ -1414,9 +1447,50 @@ function showHeroSplit(reelUrl) {
   if (!el) return;
   var vid = document.getElementById('hero-bg-video');
   if (vid && reelUrl) { vid.src = reelUrl; }
+  el.style.display = '';
   el.classList.add('visible');
   document.body.style.overflow = 'hidden';
   window._heroReelUrl = reelUrl || '';
+}
+
+function populateHeroThumbs(projects) {
+  var container = document.getElementById('hero-thumbs');
+  if (!container) return;
+  var thumbs = projects.filter(function(p) { return p.thumb; });
+  if (!thumbs.length) return;
+
+  var numRows = 12;
+  var speeds  = [70, 55, 80, 60, 75, 50, 85, 65, 72, 58, 68, 52];
+
+  /* fisher-yates shuffle with seed */
+  function seededShuffle(arr, seed) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      seed = (seed * 1664525 + 1013904223) & 0xffffffff;
+      var j = Math.abs(seed) % (i + 1);
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  var html = '';
+  for (var r = 0; r < numRows; r++) {
+    /* shuffle differently for every row so no visual pattern */
+    var shuffled = seededShuffle(thumbs, r * 7919 + 1234);
+    /* fill to at least 16 unique-looking items */
+    var row = [];
+    while (row.length < 16) row = row.concat(shuffled);
+    row = row.slice(0, 16);
+    /* duplicate for seamless loop */
+    var items = row.concat(row).map(function(p) {
+      return '<div class="hero-thumb-item" style="background-image:url(\'' + p.thumb + '\')"></div>';
+    }).join('');
+    var dir = r % 2 === 0 ? 'hero-row--left' : 'hero-row--right';
+    var spd = speeds[r % speeds.length] + 's';
+    html += '<div class="hero-row ' + dir + '" style="--spd:' + spd + '">'
+          + '<div class="hero-row-track">' + items + '</div></div>';
+  }
+  container.innerHTML = html;
 }
 
 function dismissHeroSplit() {
@@ -1491,8 +1565,12 @@ function unlock() {
   showSection(initialSection);
   // show hero split if enabled and no deep-link modal
   var s = window._settings || {};
-  if (s.hero_split === 'true' && s.hero_reel && !hashParts[1]) {
+  var heroEl = document.getElementById('hero-split');
+  var heroEnabled = (s.hero_split || '').trim().toLowerCase() === 'true';
+  if (heroEnabled && s.hero_reel && !hashParts[1]) {
     showHeroSplit(s.hero_reel);
+  } else {
+    if (heroEl) { heroEl.style.display = 'none'; heroEl.classList.remove('visible'); }
   }
 }
 
