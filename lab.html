@@ -73,6 +73,10 @@
   .lab-modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; color: rgba(255,255,255,0.92); }
   .lab-modal-date { font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 300; }
   .lab-modal-desc { font-size: 13px; line-height: 1.75; color: rgba(255,255,255,0.55); font-weight: 300; }
+  .lab-modal-desc a { color: #5aaaff; text-decoration: none; }
+  .lab-modal-desc a:hover { text-decoration: underline; }
+  .lab-card-desc a { color: #4a8fd4; text-decoration: none; }
+  .lab-card-desc a:hover { text-decoration: underline; }
   .lab-modal-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 11px; color: rgba(255,255,255,0.5); text-decoration: none; border-bottom: 0.5px solid rgba(255,255,255,0.15); padding-bottom: 1px; transition: color 0.2s, border-color 0.2s; }
   .lab-modal-link:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
 
@@ -221,22 +225,56 @@ function applyNav(s) {
   });
 }
 
-function parseLabCSV(text) {
-  var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
-  if (lines.length < 2) return [];
-  var headers = lines[0].split(",").map(function(h) { return h.trim(); });
-  return lines.slice(1).map(function(line) {
-    var values = [], cur = "", inQuote = false;
-    for (var i = 0; i < line.length; i++) {
-      var ch = line[i];
-      if (ch === '"' && !inQuote) { inQuote = true; continue; }
-      if (ch === '"' && inQuote) { inQuote = false; continue; }
-      if (ch === ',' && !inQuote) { values.push(cur.trim()); cur = ""; continue; }
-      cur += ch;
+/* ── rich-text renderer ── */
+function renderText(raw) {
+  if (!raw) return '';
+  var out = raw
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // [text](url) markdown links
+  out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  // word (url) simple links
+  out = out.replace(/(\S+)\s*\((https?:\/\/[^\s)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  // @username → instagram link (only when @ is at start or after whitespace)
+  out = out.replace(/(^|[ \t\n])@([\w.]+)/g,
+    '$1<a href="https://instagram.com/$2" target="_blank" rel="noopener">@$2</a>');
+  // literal \n (from converter tool) and real newlines → <br>
+  out = out.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
+  return out;
+}
+
+/* ── CSV parser — handles multiline quoted fields (LibreOffice safe) ── */
+function csvRows(text) {
+  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+             .replace(/\u2028/g, '\n').replace(/\u2029/g, '\n\n');
+  var rows = [], fields = [], cur = '', inQ = false;
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i + 1] === '"') { cur += '"'; i++; }
+      else if (c === '"') { inQ = false; }
+      else { cur += c; }
+    } else {
+      if (c === '"') { inQ = true; }
+      else if (c === ',') { fields.push(cur); cur = ''; }
+      else if (c === '\n') { fields.push(cur); rows.push(fields); fields = []; cur = ''; }
+      else { cur += c; }
     }
-    values.push(cur.trim());
+  }
+  if (cur || fields.length) { fields.push(cur); rows.push(fields); }
+  return rows;
+}
+
+function parseLabCSV(text) {
+  var rows = csvRows(text).filter(function(r) {
+    return r.length && r[0].trim() && !r[0].trim().startsWith('#');
+  });
+  if (rows.length < 2) return [];
+  var headers = rows[0].map(function(h) { return h.trim(); });
+  return rows.slice(1).map(function(row) {
     var obj = {};
-    headers.forEach(function(h, i) { obj[h] = values[i] || ""; });
+    headers.forEach(function(h, i) { obj[h] = (row[i] !== undefined ? row[i] : '').trim(); });
     return obj;
   }).filter(function(p) { return p.title; });
 }
@@ -260,7 +298,7 @@ function renderLab(posts) {
       + (p.tag ? '<span class="lab-card-tag">' + p.tag + '</span>' : '')
       + '<div class="lab-card-title">' + p.title + '</div>'
       + (p.date ? '<div class="lab-card-date">' + p.date + '</div>' : '')
-      + (p.desc ? '<div class="lab-card-desc">' + p.desc.substring(0, 100) + (p.desc.length > 100 ? '…' : '') + '</div>' : '')
+      + (p.desc ? '<div class="lab-card-desc">' + (p.desc.length > 100 ? p.desc.substring(0, 100) + '…' : p.desc) + '</div>' : '')
       + '</div>';
     card.addEventListener("click", function() {
       if (p.link && !p.image && !p.desc) { window.open(p.link, "_blank", "noopener"); }
@@ -275,7 +313,7 @@ function openLabModal(p) {
   document.getElementById("lab-modal-tag").textContent = p.tag || "";
   document.getElementById("lab-modal-title").textContent = p.title || "";
   document.getElementById("lab-modal-date").textContent = p.date || "";
-  document.getElementById("lab-modal-desc").textContent = p.desc || "";
+  document.getElementById("lab-modal-desc").innerHTML = renderText(p.desc || '');
   var mediaEl = document.getElementById("lab-modal-media");
   var linkEl = document.getElementById("lab-modal-link");
   mediaEl.innerHTML = ""; mediaEl.style.display = "none";

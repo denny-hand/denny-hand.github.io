@@ -199,14 +199,36 @@ function applyNav(s) {
   });
 }
 
+/* ── CSV parser — handles multiline quoted fields (LibreOffice safe) ── */
+function csvRows(text) {
+  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  var rows = [], fields = [], cur = '', inQ = false;
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i + 1] === '"') { cur += '"'; i++; }
+      else if (c === '"') { inQ = false; }
+      else { cur += c; }
+    } else {
+      if (c === '"') { inQ = true; }
+      else if (c === ',') { fields.push(cur); cur = ''; }
+      else if (c === '\n') { fields.push(cur); rows.push(fields); fields = []; cur = ''; }
+      else { cur += c; }
+    }
+  }
+  if (cur || fields.length) { fields.push(cur); rows.push(fields); }
+  return rows;
+}
+
 function parsePaintingsCSV(text) {
-  var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
-  if (lines.length < 2) return [];
-  var headers = lines[0].split(",").map(function(h) { return h.trim(); });
-  return lines.slice(1).map(function(line) {
-    var values = line.split(",").map(function(v) { return v.trim(); });
+  var rows = csvRows(text).filter(function(r) {
+    return r.length && r[0].trim() && !r[0].trim().startsWith('#');
+  });
+  if (rows.length < 2) return [];
+  var headers = rows[0].map(function(h) { return h.trim(); });
+  return rows.slice(1).map(function(row) {
     var obj = {};
-    headers.forEach(function(h, i) { obj[h] = values[i] || ""; });
+    headers.forEach(function(h, i) { obj[h] = (row[i] !== undefined ? row[i] : '').trim(); });
     return obj;
   }).filter(function(p) { return p.file; });
 }

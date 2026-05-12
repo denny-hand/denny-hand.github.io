@@ -192,6 +192,10 @@
   .modal-meta-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
   .modal-meta-value { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 400; }
   .modal-details { font-size: 12px; line-height: 1.75; color: rgba(255,255,255,0.5); font-weight: 300; }
+  .modal-details a { color: #5aaaff; text-decoration: none; }
+  .modal-details a:hover { text-decoration: underline; }
+  .card-desc a { color: rgba(180,210,255,0.9); text-decoration: none; }
+  .card-desc a:hover { text-decoration: underline; }
 
   /* contact modal */
   #contact-modal { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
@@ -370,25 +374,37 @@ function parseSettingsCSV(text) {
   return s;
 }
 
-function parseCSV(text) {
-  var projectLines = [];
-  var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
-  lines.forEach(function(l) { projectLines.push(l); });
-  window._settings = window._settings || {};
-  if (projectLines.length < 2) return [];
-  var headers = projectLines[0].split(",").map(function(h) { return h.trim(); });
-  return projectLines.slice(1).map(function(line) {
-    var values = [], cur = "", inQuote = false;
-    for (var i = 0; i < line.length; i++) {
-      var ch = line[i];
-      if (ch === '"' && !inQuote) { inQuote = true; continue; }
-      if (ch === '"' && inQuote) { inQuote = false; continue; }
-      if (ch === ',' && !inQuote) { values.push(cur.trim()); cur = ""; continue; }
-      cur += ch;
+/* ── CSV parser — handles multiline quoted fields (LibreOffice safe) ── */
+function csvRows(text) {
+  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+             .replace(/\u2028/g, '\n').replace(/\u2029/g, '\n\n');
+  var rows = [], fields = [], cur = '', inQ = false;
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i + 1] === '"') { cur += '"'; i++; } // "" → escaped "
+      else if (c === '"') { inQ = false; }
+      else { cur += c; } // newlines inside quotes are preserved
+    } else {
+      if (c === '"') { inQ = true; }
+      else if (c === ',') { fields.push(cur); cur = ''; }
+      else if (c === '\n') { fields.push(cur); rows.push(fields); fields = []; cur = ''; }
+      else { cur += c; }
     }
-    values.push(cur.trim());
+  }
+  if (cur || fields.length) { fields.push(cur); rows.push(fields); }
+  return rows;
+}
+
+function parseCSV(text) {
+  var rows = csvRows(text).filter(function(r) {
+    return r.length && r[0].trim() && !r[0].trim().startsWith('#');
+  });
+  if (rows.length < 2) return [];
+  var headers = rows[0].map(function(h) { return h.trim(); });
+  return rows.slice(1).map(function(row) {
     var obj = {};
-    headers.forEach(function(h, i) { obj[h] = values[i] || ""; });
+    headers.forEach(function(h, i) { obj[h] = (row[i] !== undefined ? row[i] : '').trim(); });
     return obj;
   });
 }
@@ -690,7 +706,7 @@ function openModal(p) {
     if (p.role) metaEl.innerHTML += '<div class="modal-meta-row"><span class="modal-meta-label">role</span><span class="modal-meta-value">' + p.role + '</span></div>';
     if (p.studio) metaEl.innerHTML += '<div class="modal-meta-row"><span class="modal-meta-label">studio</span><span class="modal-meta-value">' + p.studio + '</span></div>';
     if (p.year) metaEl.innerHTML += '<div class="modal-meta-row"><span class="modal-meta-label">year</span><span class="modal-meta-value">' + p.year + '</span></div>';
-    detailsEl.textContent = p.details || "";
+    detailsEl.innerHTML = renderText(p.details || '');
     infoEl.classList.remove("empty");
   } else { infoEl.classList.add("empty"); }
   document.getElementById("modal").classList.add("open");
@@ -725,6 +741,25 @@ document.addEventListener("keydown", function(e) {
   }
 });
 
+/* ── rich-text renderer ── */
+function renderText(raw) {
+  if (!raw) return '';
+  var out = raw
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // [text](url) markdown links
+  out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  // word (url) simple links — word immediately before (url)
+  out = out.replace(/(\S+)\s*\((https?:\/\/[^\s)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  // @username → instagram link (only when @ is at start or after whitespace)
+  out = out.replace(/(^|[ \t\n])@([\w.]+)/g,
+    '$1<a href="https://instagram.com/$2" target="_blank" rel="noopener">@$2</a>');
+  // literal \n (from converter tool) and real newlines → <br>
+  out = out.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
+  return out;
+}
+
 function makeCard(p) {
   var card = document.createElement("div");
   card.className = "card" + (p.priority ? " card--featured" : "");
@@ -739,7 +774,7 @@ function makeCard(p) {
     + (p.role ? '<span class="role-tag">' + p.role + '</span>' : '')
     + logoHTML
     + awardHTML
-    + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc">' + p.desc + '</p></div>'
+    + '<div class="card-body"><div class="card-top"><span class="card-year">' + p.year + '</span></div><h2 class="card-title">' + p.title + '</h2><p class="card-desc"></p></div>'
     + (p.preview ? '<div class="scrub-bar"><div class="scrub-progress"></div></div>' : '');
   return card;
 }
@@ -756,6 +791,8 @@ function renderGrid(projects) {
       else if (p.page || p.video) { (function(p){ card.addEventListener("click", function(){ openModal(p); }); })(p); }
       if (p.preview) attachScrub(card);
       container.appendChild(card);
+      var descEl = card.querySelector('.card-desc');
+      if (descEl) descEl.innerHTML = renderText(p.desc || '');
       allCards.push({ card: card, delay: 30 + (offset + i) * 40 });
     });
   }
