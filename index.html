@@ -224,13 +224,17 @@
 
   /* gallery */
   .gallery-wrap { padding: 28px; }
-  .gallery-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-  .gallery-item { flex: 0 1 280px; aspect-ratio: 1/1; overflow: hidden; background: var(--thumb); cursor: pointer; position: relative; opacity: 0; transform: translateY(10px); transition: opacity 0.25s ease, transform 0.25s ease; }
+  .gallery-grid { columns: 4 180px; column-gap: 8px; }
+  .gallery-item { break-inside: avoid; margin-bottom: 8px; width: 100%; overflow: hidden; background: var(--thumb); cursor: pointer; position: relative; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
   .gallery-item.visible { opacity: 1; transform: translateY(0); }
   .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
   .gallery-item:hover img { transform: scale(1.05); }
   .gallery-item-title { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 12px; background: linear-gradient(transparent, rgba(0,0,0,0.6)); font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 300; opacity: 0; transition: opacity 0.2s; }
   .gallery-item:hover .gallery-item-title { opacity: 1; }
+  .gallery-item--video img { position: absolute; inset: 0; }
+  .gallery-item--video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s ease, transform 0.45s ease; pointer-events: none; z-index: 1; }
+  .gallery-item--video:hover video, .gallery-item--video.touch-active video { opacity: 1; transform: scale(1.05); }
+  .gallery-item--video:hover .scrub-bar { opacity: 1; }
 
   /* lightbox */
   #lightbox { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
@@ -314,7 +318,7 @@
     #modal { padding: 0; align-items: flex-end; }
     #modal.open { background: rgba(0,0,0,0.92); }
     .gallery-wrap { padding: 12px; }
-    .gallery-item { flex: 0 1 calc(50% - 4px); }
+    .gallery-grid { columns: 2 140px; }
     .lab-wrap { padding: 12px; }
     .lab-card { flex: 0 1 100%; }
     #lab-modal { padding: 0; align-items: flex-end; }
@@ -639,6 +643,7 @@
   <button class="lightbox-close" onclick="closeLightbox()">close ✕</button>
   <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)">&#8249;</button>
   <img id="lightbox-img" src="" alt="" />
+  <video id="lightbox-video" controls playsinline style="display:none;max-width:92vw;max-height:92vh;object-fit:contain;opacity:0;transform:scale(0.95);transition:opacity 0.25s ease,transform 0.28s cubic-bezier(0.34,1.3,0.64,1)"></video>
   <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1)">&#8250;</button>
   <span class="lightbox-title" id="lightbox-title"></span>
 </div>
@@ -1325,18 +1330,51 @@ function renderGallery(paintings) {
   var grid = document.getElementById("gallery-grid");
   grid.innerHTML = "";
   _paintings = paintings;
+  /* seeded aspect ratios for visual variety */
+  var ratioPool = ['1/1', '4/5', '3/4', '5/4', '4/3', '2/3', '3/2', '4/5', '1/1', '5/4'];
+  function seedRatio(idx) {
+    var s = ((idx + 1) * 2654435761) >>> 0;
+    return ratioPool[s % ratioPool.length];
+  }
   paintings.forEach(function(p, i) {
     var item = document.createElement("div");
-    item.className = "gallery-item";
+    var isVideo = /\.(webm|mp4)(\?.*)?$/i.test(p.file || '');
+    item.className = "gallery-item" + (isVideo ? " gallery-item--video" : "");
+    item.style.aspectRatio = seedRatio(i);
     var img = document.createElement("img");
-    img.src = p.file;
     img.alt = p.title || "";
     item.appendChild(img);
+    if (isVideo) {
+      /* cover: use explicit cover image, else extract frame from video */
+      if (p.cover) {
+        img.src = p.cover;
+      } else {
+        (function(imgEl, url) {
+          extractVideoFrame(url, function(dataUrl) {
+            if (dataUrl) imgEl.src = dataUrl;
+          });
+        })(img, p.file);
+      }
+      var vid = document.createElement("video");
+      vid.src = p.file;
+      vid.muted = true;
+      vid.playsInline = true;
+      vid.preload = "metadata"; /* load duration so scrub works */
+      vid.loop = true;
+      item.appendChild(vid);
+      var scrubBar = document.createElement("div");
+      scrubBar.className = "scrub-bar";
+      scrubBar.innerHTML = '<div class="scrub-progress"></div>';
+      item.appendChild(scrubBar);
+      attachScrub(item);
+    } else {
+      img.src = p.file;
+    }
     if (p.title) {
-      var title = document.createElement("div");
-      title.className = "gallery-item-title";
-      title.textContent = p.title;
-      item.appendChild(title);
+      var caption = document.createElement("div");
+      caption.className = "gallery-item-title";
+      caption.textContent = p.title;
+      item.appendChild(caption);
     }
     item.addEventListener("click", function() { openLightbox(i); });
     grid.appendChild(item);
@@ -1359,8 +1397,20 @@ function openLightbox(index) {
   var p = _paintings[index];
   var lb = document.getElementById("lightbox");
   var img = document.getElementById("lightbox-img");
+  var vid = document.getElementById("lightbox-video");
   var title = document.getElementById("lightbox-title");
-  img.src = p.file;
+  var isVideo = /\.(webm|mp4)(\?.*)?$/i.test(p.file || '');
+  if (isVideo) {
+    img.style.display = "none";
+    vid.src = p.file;
+    vid.style.display = "";
+    setTimeout(function() { vid.style.opacity = "1"; vid.style.transform = "scale(1)"; }, 20);
+    vid.play().catch(function(){});
+  } else {
+    vid.pause(); vid.src = ""; vid.style.display = "none"; vid.style.opacity = "0"; vid.style.transform = "scale(0.95)";
+    img.src = p.file;
+    img.style.display = "";
+  }
   title.textContent = p.title || "";
   var slug = p.title ? slugify(p.title) : String(index);
   history.replaceState(null, '', '#paintings/' + slug);
@@ -1371,6 +1421,10 @@ function openLightbox(index) {
 function closeLightbox() {
   if (!document.getElementById("lightbox").classList.contains("open")) return;
   history.replaceState(null, '', '#paintings');
+  var vid = document.getElementById("lightbox-video");
+  if (vid) { vid.pause(); vid.src = ""; vid.style.display = "none"; vid.style.opacity = "0"; vid.style.transform = "scale(0.95)"; }
+  var img = document.getElementById("lightbox-img");
+  if (img) img.style.display = "";
   document.getElementById("lightbox").classList.remove("open");
   document.body.style.overflow = "";
 }
@@ -1379,13 +1433,27 @@ function lightboxNav(dir) {
   _lightboxIndex = (_lightboxIndex + dir + _paintings.length) % _paintings.length;
   var p = _paintings[_lightboxIndex];
   var img = document.getElementById("lightbox-img");
+  var vid = document.getElementById("lightbox-video");
   var title = document.getElementById("lightbox-title");
-  img.style.opacity = "0";
-  setTimeout(function() {
-    img.src = p.file;
+  var isVideo = /\.(webm|mp4)(\?.*)?$/i.test(p.file || '');
+  if (isVideo) {
+    img.style.opacity = ""; img.style.display = "none";
+    vid.pause();
+    vid.src = p.file;
+    vid.style.display = "";
+    vid.style.opacity = "0"; vid.style.transform = "scale(0.95)";
+    setTimeout(function() { vid.style.opacity = "1"; vid.style.transform = "scale(1)"; vid.play().catch(function(){}); }, 20);
     title.textContent = p.title || "";
-    img.style.opacity = "";
-  }, 150);
+  } else {
+    vid.pause(); vid.src = ""; vid.style.display = "none"; vid.style.opacity = "0"; vid.style.transform = "scale(0.95)";
+    img.style.display = "";
+    img.style.opacity = "0";
+    setTimeout(function() {
+      img.src = p.file;
+      title.textContent = p.title || "";
+      img.style.opacity = "";
+    }, 150);
+  }
 }
 
 function handleLightboxClick(e) {
@@ -1393,6 +1461,33 @@ function handleLightboxClick(e) {
 }
 
 /* ── lab ── */
+function getYouTubeThumb(url) {
+  var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? 'https://img.youtube.com/vi/' + m[1] + '/hqdefault.jpg' : null;
+}
+
+function extractVideoFrame(url, callback) {
+  var vid = document.createElement('video');
+  vid.crossOrigin = 'anonymous';
+  vid.preload = 'metadata';
+  vid.muted = true;
+  vid.playsInline = true;
+  var done = false;
+  vid.addEventListener('loadeddata', function() {
+    vid.currentTime = vid.duration > 1 ? 1 : 0;
+  });
+  vid.addEventListener('seeked', function() {
+    if (done) return; done = true;
+    var c = document.createElement('canvas');
+    c.width = vid.videoWidth || 640; c.height = vid.videoHeight || 360;
+    c.getContext('2d').drawImage(vid, 0, 0, c.width, c.height);
+    try { callback(c.toDataURL('image/jpeg', 0.85)); } catch(e) { callback(null); }
+    vid.src = '';
+  });
+  vid.addEventListener('error', function() { if (!done) { done = true; callback(null); } });
+  vid.src = url;
+}
+
 function renderLab(posts) {
   var grid = document.getElementById("lab-grid");
   grid.innerHTML = "";
@@ -1403,6 +1498,14 @@ function renderLab(posts) {
     var thumbHTML = "";
     if (p.image) {
       thumbHTML = '<div class="lab-card-thumb"><img src="' + p.image + '" alt="' + p.title + '" /></div>';
+    } else if (p.video) {
+      var ytThumb = getYouTubeThumb(p.video);
+      if (ytThumb) {
+        thumbHTML = '<div class="lab-card-thumb"><img src="' + ytThumb + '" alt="' + p.title + '" /></div>';
+      } else {
+        /* local video — placeholder, frame extracted async below */
+        thumbHTML = '<div class="lab-card-thumb lab-card-thumb--pending"></div>';
+      }
     } else {
       thumbHTML = '<div class="lab-card-thumb-empty"><svg class="lab-card-thumb-icon" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>';
     }
@@ -1419,6 +1522,18 @@ function renderLab(posts) {
     });
     grid.appendChild(card);
     setTimeout(function() { card.classList.add("visible"); }, 30 + i * 50);
+    /* async frame extraction for local videos */
+    if (!p.image && p.video && p.video.match(/\.(webm|mp4)$/i)) {
+      (function(c, url) {
+        extractVideoFrame(url, function(dataUrl) {
+          if (!dataUrl) return;
+          var el = c.querySelector('.lab-card-thumb--pending');
+          if (!el) return;
+          el.classList.remove('lab-card-thumb--pending');
+          el.innerHTML = '<img src="' + dataUrl + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" />';
+        });
+      })(card, p.video);
+    }
   });
   if (window._pendingModal && window._pendingModal.section === 'lab') {
     var slug = window._pendingModal.slug;

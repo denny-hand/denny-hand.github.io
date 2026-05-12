@@ -1,9 +1,11 @@
-# LAB — TOOLS, EXPERIMENTS, POSTS
-# title — название поста (обязательно)
-# date  — дата: 2024-03
-# tag   — тег: tool / experiment / study / breakdown
-# image — превью картинка: lab/thumb.jpg (необязательно)
-# video — видео: YouTube/Vimeo ссылка или lab/video.webm (необязательно)
-# desc  — текст поста (необязательно)
-# link  — внешняя ссылка, например на GitHub (необязательно)
+# LAB — TOOLS, EXPERIMENTS, POSTS,,,,
+# title — название поста (обязательно),,,,,,
+# date  — дата: 2024-03,,,,,,
+# tag   — тег: tool / experiment / study / breakdown,,,,,,
+# image — превью картинка: lab/thumb.jpg (необязательно),,,,,,
+# video — видео: YouTube/Vimeo ссылка или lab/video.webm (необязательно),,,,,,
+# desc  — текст поста (необязательно),,,,,,
+# link  — внешняя ссылка, например на GitHub (необязательно),,,,,
 title,date,tag,image,video,desc,link
+"Physically Accurate DoF for Gaussian Splatting in Nuke via the Accumulation Method
+",,,,lab/dof_accum_method.webm,"To achieve physically correct depth of field for Gaussian Splatting, I implemented a frame accumulation technique that simulates the behavior of a real aperture. Instead of relying on standard post-process blur filters, I used a Python script to generate an array of 40 virtual cameras—a technique tracing back to the classic Accumulation Buffer algorithms of the 90s. Each camera undergoes micro-movements, orbiting the Focal Point, which creates natural parallax and a stochastic sampling effect of the lens area. The entire array is rendered as a sequence of sub-frames, which are then averaged using a FrameBlend node. This approach produces genuine geometric defocus, where the bokeh shape is directly determined by the cameras' motion path. Using splats provides a distinct advantage here: their soft-edged nature allows for seamless blending, eliminating the ""stepping"" artifacts typical of traditional meshes. Unlike Z-Defocus, this method handles object edges perfectly, preventing visual bleeding at the boundaries of different depth planes. The result is a summation of 40 discrete samples into a single soft image, matching the quality and light physics of high-end offline renderers. This technique transforms a mathematical model into a vivid image with natural, physically grounded bokeh. ",

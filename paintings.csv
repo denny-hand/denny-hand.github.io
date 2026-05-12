@@ -1,4 +1,20 @@
-# PAINTINGS GALLERY
-# file  — путь к файлу: paintings/sketch1.jpg
-# title — подпись (необязательно)
-file,title
+# PAINTINGS GALLERY,,
+# file  — путь к файлу изображения или видео: paintings/sketch.jpg / paintings/timelapse.webm,,
+# cover — (необязательно) обложка для видео: paintings/sketch.jpg — если пусто, кадр берётся из видео,
+# title — подпись (необязательно),,
+file,cover,title
+paintings/bastionnaa_4k.jpg,,"""bastionna"" 2022"
+paintings/maryshka_1080p.webm,paintings/maryshka.jpg,❤️
+paintings/leha.png,,Leha 1999
+Paintings/1.jpg,,“ALINA” 2023
+Paintings/2.jpg,,
+Paintings/3.jpg,,“MANE” 2023
+Paintings/4.jpg,,
+,,
+Paintings/6.jpg,,
+Paintings/7.jpg,,
+Paintings/8.jpg,,“MANE” 2023
+Paintings/9.jpg,,
+Paintings/10.jpg,,“eva” 2020
+Paintings/11.jpg,,
+Paintings/5.jpg,,

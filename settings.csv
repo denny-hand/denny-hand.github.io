@@ -10,7 +10,7 @@
 # nav_commercials  — true / false  (показывать пункт в навигации),
 # nav_paintings    — true / false,
 # nav_lab          — true / false,
-hero_split,true
+hero_split,false
 hero_reel,breakdown/lacmi.webm
 theme,2
 show_cat_filter,false
