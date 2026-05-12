@@ -60,16 +60,21 @@
   /* lab modal */
   #lab-modal { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0); align-items: center; justify-content: center; transition: background 0.3s ease; }
   #lab-modal.open { display: flex; background: rgba(0,0,0,0.85); }
-  .lab-modal-inner { position: relative; width: 92%; max-width: 680px; background: var(--modal-bg); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; transform: scale(0.92); opacity: 0; transition: transform 0.32s cubic-bezier(0.34,1.3,0.64,1), opacity 0.25s ease; }
+  .lab-modal-inner { position: relative; width: 88vw; max-width: 88vw; height: 88vh; max-height: 88vh; background: var(--modal-bg); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transform: scale(0.92); opacity: 0; transition: transform 0.32s cubic-bezier(0.34,1.3,0.64,1), opacity 0.25s ease; }
   #lab-modal.open .lab-modal-inner { transform: scale(1); opacity: 1; }
   .lab-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 0.5px solid rgba(255,255,255,0.08); flex-shrink: 0; }
   .lab-modal-tag { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
   .lab-modal-close { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 11px; font-family: 'Inter', sans-serif; cursor: pointer; letter-spacing: 0.05em; transition: color 0.2s; padding: 4px 0; }
   .lab-modal-close:hover { color: #fff; }
-  .lab-modal-body { overflow-y: auto; flex: 1; }
-  .lab-modal-media { width: 100%; aspect-ratio: 3/2; background: #000; position: relative; flex-shrink: 0; }
-  .lab-modal-media img, .lab-modal-media video, .lab-modal-media iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: none; }
-  .lab-modal-content { padding: 24px 24px 28px; display: flex; flex-direction: column; gap: 12px; }
+  /* two-column body */
+  .lab-modal-body { display: flex; flex-direction: row; flex: 1; overflow: hidden; min-height: 0; }
+  .lab-modal-left { flex: 1; display: flex; align-items: center; justify-content: center; background: #000; min-width: 0; overflow: hidden; }
+  .lab-modal-left.empty { display: none; }
+  .lab-modal-right { width: 380px; flex-shrink: 0; overflow-y: auto; border-left: 0.5px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; }
+  .lab-modal-body.no-media .lab-modal-right { width: 100%; border-left: none; }
+  .lab-modal-media { width: 100%; height: 100%; position: relative; }
+  .lab-modal-media img, .lab-modal-media video, .lab-modal-media iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border: none; }
+  .lab-modal-content { padding: 28px 24px 32px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
   .lab-modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; color: rgba(255,255,255,0.92); }
   .lab-modal-date { font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 300; }
   .lab-modal-desc { font-size: 13px; line-height: 1.75; color: rgba(255,255,255,0.55); font-weight: 300; }
@@ -111,7 +116,10 @@
     .lab-card { flex: 0 1 100%; }
     footer { padding: 20px 16px; }
     #lab-modal { padding: 0; align-items: flex-end; }
-    .lab-modal-inner { width: 100%; max-width: 100%; border-radius: 0; max-height: 100vh; }
+    .lab-modal-inner { width: 100%; max-width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; }
+    .lab-modal-body { flex-direction: column; }
+    .lab-modal-left { flex: none; width: 100%; }
+    .lab-modal-right { width: 100% !important; border-left: none !important; border-top: 0.5px solid rgba(255,255,255,0.08); }
   }
 </style>
 </head>
@@ -162,13 +170,17 @@
       <span class="lab-modal-tag" id="lab-modal-tag"></span>
       <button class="lab-modal-close" onclick="closeLabModal()">close ✕</button>
     </div>
-    <div class="lab-modal-body">
-      <div class="lab-modal-media" id="lab-modal-media" style="display:none"></div>
-      <div class="lab-modal-content">
-        <div class="lab-modal-title" id="lab-modal-title"></div>
-        <div class="lab-modal-date" id="lab-modal-date"></div>
-        <div class="lab-modal-desc" id="lab-modal-desc"></div>
-        <a class="lab-modal-link" id="lab-modal-link" target="_blank" rel="noopener" style="display:none">open link ↗</a>
+    <div class="lab-modal-body" id="lab-modal-body">
+      <div class="lab-modal-left" id="lab-modal-left">
+        <div class="lab-modal-media" id="lab-modal-media"></div>
+      </div>
+      <div class="lab-modal-right">
+        <div class="lab-modal-content">
+          <div class="lab-modal-title" id="lab-modal-title"></div>
+          <div class="lab-modal-date" id="lab-modal-date"></div>
+          <div class="lab-modal-desc" id="lab-modal-desc"></div>
+          <a class="lab-modal-link" id="lab-modal-link" target="_blank" rel="noopener" style="display:none">open link ↗</a>
+        </div>
       </div>
     </div>
   </div>
@@ -315,14 +327,17 @@ function openLabModal(p) {
   document.getElementById("lab-modal-date").textContent = p.date || "";
   document.getElementById("lab-modal-desc").innerHTML = renderText(p.desc || '');
   var mediaEl = document.getElementById("lab-modal-media");
-  var linkEl = document.getElementById("lab-modal-link");
-  mediaEl.innerHTML = ""; mediaEl.style.display = "none";
+  var leftEl  = document.getElementById("lab-modal-left");
+  var bodyEl  = document.getElementById("lab-modal-body");
+  var linkEl  = document.getElementById("lab-modal-link");
+  mediaEl.innerHTML = "";
+  var hasMedia = false;
   if (p.image) {
-    mediaEl.style.display = "block";
+    hasMedia = true;
     var img = document.createElement("img"); img.src = p.image; img.alt = p.title;
     mediaEl.appendChild(img);
   } else if (p.video) {
-    mediaEl.style.display = "block";
+    hasMedia = true;
     var yt = p.video.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
     var vm = p.video.match(/vimeo\.com\/(\d+)/);
     if (yt || vm) {
@@ -335,6 +350,8 @@ function openLabModal(p) {
       mediaEl.appendChild(vid);
     }
   }
+  if (hasMedia) { leftEl.classList.remove("empty"); bodyEl.classList.remove("no-media"); }
+  else          { leftEl.classList.add("empty");    bodyEl.classList.add("no-media"); }
   if (p.link) { linkEl.href = p.link; linkEl.style.display = "inline-flex"; }
   else { linkEl.style.display = "none"; }
   document.getElementById("lab-modal").classList.add("open");
