@@ -10,13 +10,13 @@
 # nav_commercials  — true / false  (показывать пункт в навигации),
 # nav_paintings    — true / false,
 # nav_lab          — true / false,
-hero_split,false
+hero_split,true
 hero_reel,breakdown/lacmi.webm
 theme,2
 show_cat_filter,false
 show_role_filter,false
 password_enabled,true
-password,1234
+password,123456789
 imdb,https://www.imdb.com/name/nm13145444/
 linkedin,https://www.linkedin.com/in/dennyrych/
 email,deniskarucha@gmail.com

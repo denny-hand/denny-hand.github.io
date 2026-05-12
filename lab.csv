@@ -9,3 +9,31 @@
 title,date,tag,image,video,desc,link
 "Physically Accurate DoF for Gaussian Splatting in Nuke via the Accumulation Method
 ",,,,lab/dof_accum_method.webm,"To achieve physically correct depth of field for Gaussian Splatting, I implemented a frame accumulation technique that simulates the behavior of a real aperture. Instead of relying on standard post-process blur filters, I used a Python script to generate an array of 40 virtual cameras—a technique tracing back to the classic Accumulation Buffer algorithms of the 90s. Each camera undergoes micro-movements, orbiting the Focal Point, which creates natural parallax and a stochastic sampling effect of the lens area. The entire array is rendered as a sequence of sub-frames, which are then averaged using a FrameBlend node. This approach produces genuine geometric defocus, where the bokeh shape is directly determined by the cameras' motion path. Using splats provides a distinct advantage here: their soft-edged nature allows for seamless blending, eliminating the ""stepping"" artifacts typical of traditional meshes. Unlike Z-Defocus, this method handles object edges perfectly, preventing visual bleeding at the boundaries of different depth planes. The result is a summation of 40 discrete samples into a single soft image, matching the quality and light physics of high-end offline renderers. This technique transforms a mathematical model into a vivid image with natural, physically grounded bokeh. ",
+"Part 1.
+Using Gaussian Splatting in Production: Supervising a Bullet-Time Scene",,,,lab/brakedown_V025_1080p.webm,"Recently, I worked as a compositing supervisor on a music video that featured a challenging bullet-time shot. The goal was to freeze a dramatic moment where a horse rears up, while the artist sitting on it remains “alive,” singing and moving naturally.
+
+Scene Capture and Reconstruction
+We shot the scene in a forest using 20 Canon cameras arranged in a circle. Using Jawset PostShot, we created a 3D Gaussian Splatting scan of the horse and stunt performer in mid-air. To integrate it into Nuke, we used the Irrealix plugin, rendering the splat scene almost like a 3D environment.
+
+Studio Footage and Compositing
+Separately, we filmed the artist in a studio on a horse mock-up with a saddle, using Blackmagic cameras and a dolly pass. Though the artist tried to stay still, his body trembled from tension, so we applied stabilization.
+
+We now had two elements:
+A splat scene of the frozen moment
+A studio plate of the artist performing
+
+After tracking the studio footage and generating a virtual camera, I manually aligned the mock-up horse to the splat scan inside Nuke — a tricky but critical step.
+
+Benefits of Splatting
+Gaussian Splatting made it easy to remove the original stunt performer directly from the scene. Still, we needed traditional cleanup for refinement. One of the biggest advantages was camera flexibility — we could change angle and focal length almost like in full 3D.
+Despite working in 6K, the splat scene remained lightweight and rendered nearly in real time, even on a laptop.
+
+Conclusion
+Gaussian Splatting proved highly effective in production. It offered a powerful, flexible, and lightweight way to blend live-action and scanned 3D data. For complex scenes that require frozen environments with live elements, this technology is a game-changer.
+",
+"Part 2.
+Gaussian Splatting",,,,lab/sh_v005_v012_1080p.webm,"Sharing another example from the project. Gaussian Splatting fully processes not only geometry but also volumetric data — smoke, fire, sparks represented as splats with density parameters.
+
+The key feature is the ability to directly separate splats into layers with alpha extraction for each layer. For volumetrics, alpha is obtained with control over density and intensity, providing flexible compositing control without the need for additional masks or tracking operations.
+
+This approach eliminates the need for traditional roto and complex keyframing of volumetric elements, significantly speeding up iterations and reducing the load on the compositing pipeline. ",
