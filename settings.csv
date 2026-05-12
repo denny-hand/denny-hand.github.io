@@ -1,4 +1,6 @@
 # НАСТРОЙКИ САЙТА,
+# hero_split — true / false: показывать сплит-экран при входе (Watch Reel / All Projects),
+# hero_reel  — путь к файлу рила (например: breakdown/lacmi.webm) или YouTube/Vimeo ссылка,
 # theme            — 1: переключатель темы виден / 2: всегда светлая / 3: всегда тёмная,
 # show_cat_filter  — true / false,
 # show_role_filter — true / false,
@@ -8,6 +10,8 @@
 # nav_commercials  — true / false  (показывать пункт в навигации),
 # nav_paintings    — true / false,
 # nav_lab          — true / false,
+hero_split,true
+hero_reel,breakdown/lacmi.webm
 theme,2
 show_cat_filter,false
 show_role_filter,false
@@ -26,3 +30,23 @@ password_session_days,1
 nav_commercials_label,
 nav_paintings_label,
 nav_lab_label,
+#,
+# ШРИФТЫ,
+# Как выбрать шрифт:,
+# 1. Открой fonts.google.com,
+# 2. Найди шрифт — скопируй его название точно как написано (например: Playfair Display),
+# 3. Вставь в поле font_body или font_headings ниже,
+# 4. Сайт автоматически загрузит его с Google Fonts,
+#,
+# font_body         — основной шрифт (текст навигации / UI / описания),
+# font_body_size    — размер в px (по умолчанию 13),
+# font_body_weight  — жирность: 100 / 200 / 300 / 400 / 500 / 600 / 700,
+# font_headings     — шрифт заголовков карточек,
+# font_headings_size   — размер в px (по умолчанию 22),
+# font_headings_weight — жирность: 100 / 200 / 300 / 400 / 500 / 600 / 700,
+font_body,Inter
+font_body_size,13
+font_body_weight,400
+font_headings,Bebas Neue
+font_headings_size,22
+font_headings_weight,400
