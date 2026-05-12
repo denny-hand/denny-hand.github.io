@@ -1,0 +1,28 @@
+# НАСТРОЙКИ САЙТА,
+# theme            — 1: переключатель темы виден / 2: всегда светлая / 3: всегда тёмная,
+# show_cat_filter  — true / false,
+# show_role_filter — true / false,
+# password_enabled — true / false,
+# password         — текст пароля,
+# card_ratio_w/h   — соотношение сторон карточек (например 3 и 2),
+# nav_commercials  — true / false  (показывать пункт в навигации),
+# nav_paintings    — true / false,
+# nav_lab          — true / false,
+theme,2
+show_cat_filter,false
+show_role_filter,false
+password_enabled,true
+password,1234
+imdb,https://www.imdb.com/name/nm13145444/
+linkedin,https://www.linkedin.com/in/dennyrych/
+email,deniskarucha@gmail.com
+card_ratio_w,3
+card_ratio_h,2
+nav_commercials,true
+nav_paintings,true
+nav_lab,true
+password_session_days,1
+# nav labels (optional — leave value empty to keep default),
+nav_commercials_label,
+nav_paintings_label,
+nav_lab_label,

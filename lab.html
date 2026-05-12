@@ -22,13 +22,13 @@
   @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   /* header */
-  header { padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); }
+  header { padding: 24px 32px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; border-bottom: 0.5px solid var(--border); }
   .site-brand { display: flex; align-items: center; gap: 8px; cursor: pointer; }
   .site-name { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
   .site-logo { width: 22px; height: 22px; stroke: var(--text); flex-shrink: 0; transform-origin: bottom center; }
   @keyframes wave { 0%{transform:rotate(0)} 15%{transform:rotate(14deg)} 30%{transform:rotate(-8deg)} 45%{transform:rotate(12deg)} 60%{transform:rotate(-6deg)} 75%{transform:rotate(10deg)} 100%{transform:rotate(0)} }
   .site-brand:hover .site-logo { animation: wave 1.2s ease-in-out infinite; }
-  .header-right { display: flex; align-items: center; gap: 20px; }
+  .header-right { display: flex; align-items: center; gap: 20px; justify-content: flex-end; }
   nav { display: flex; gap: 20px; }
   nav a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; letter-spacing: 0.01em; }
   nav a:hover, nav a.active { color: var(--text); }
@@ -120,12 +120,12 @@
       <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
     </svg>
   </div>
-  <div class="header-right">
     <nav>
-      <a href="index.html" onclick="navigateTo(event,'index.html')">commercials</a>
-      <a href="paintings.html" onclick="navigateTo(event,'paintings.html')">paintings</a>
-      <a href="lab.html" class="active">lab</a>
+      <a href="index.html" id="nav-commercials" onclick="navigateTo(event,'index.html')">commercials</a>
+      <a href="paintings.html" id="nav-paintings" onclick="navigateTo(event,'paintings.html')">paintings</a>
+      <a href="lab.html" id="nav-lab" class="active">lab</a>
     </nav>
+    <div class="header-right">
     <button class="envelope-btn" onclick="openContact()" aria-label="contact">
       <svg viewBox="0 0 24 24">
         <rect x="2" y="4" width="20" height="16" rx="2.5"/>
@@ -201,15 +201,24 @@ function toggleTheme() {
 }
 
 function parseSettingsFromCSV(text) {
-  var settings = {};
-  var lines = text.split("\n").filter(function(l) { return l.trim() && !l.trim().startsWith("#"); });
-  lines.forEach(function(l) {
-    if (l.trim().startsWith("setting:")) {
-      var parts = l.trim().slice(8).split(",");
-      if (parts.length >= 2) settings[parts[0].trim()] = parts[1].trim();
-    }
+  var s = {};
+  text.split("\n").forEach(function(l) {
+    l = l.trim();
+    if (!l || l.startsWith("#")) return;
+    var idx = l.indexOf(",");
+    if (idx > 0) s[l.slice(0, idx).trim()] = l.slice(idx + 1).split(",")[0].trim();
   });
-  return settings;
+  return s;
+}
+
+function applyNav(s) {
+  ['commercials','paintings','lab'].forEach(function(key) {
+    var el = document.getElementById('nav-' + key);
+    if (!el) return;
+    if (s['nav_' + key] === 'false') { el.style.display = 'none'; return; }
+    var label = s['nav_' + key + '_label'];
+    if (label) el.textContent = label;
+  });
 }
 
 function parseLabCSV(text) {
@@ -336,7 +345,13 @@ document.addEventListener("keydown", function(e) {
 });
 
 window.addEventListener("load", function() {
-  fetch("projects.csv?nocache=" + Date.now())
+  // clean URL display
+  (function() {
+    var p = window.location.pathname;
+    if (p.endsWith('.html')) history.replaceState(null, '', p.slice(0, -5) + window.location.search + window.location.hash);
+  })();
+
+  fetch("settings.csv?nocache=" + Date.now())
     .then(function(r) { return r.text(); })
     .then(function(text) {
       var s = parseSettingsFromCSV(text);
@@ -344,6 +359,16 @@ window.addEventListener("load", function() {
       var toggle = document.querySelector(".theme-toggle");
       if (theme === "2") { document.documentElement.setAttribute("data-theme","light"); if(toggle) toggle.style.display="none"; }
       else if (theme === "3") { document.documentElement.setAttribute("data-theme","dark"); if(toggle) toggle.style.display="none"; }
+      applyNav(s);
+      var pwEnabled = s.password_enabled !== "false";
+      var pw = (s.password || "").trim();
+      var storedPw = localStorage.getItem('site_pw') || '';
+      var unlockedAt = parseInt(localStorage.getItem('site_unlocked_at') || '0', 10);
+      var sessionDays = parseFloat(s.password_session_days || '1');
+      var sessionValid = storedPw === pw && (Date.now() - unlockedAt) < sessionDays * 86400000;
+      if (pwEnabled && pw && !sessionValid) {
+        window.location.href = 'index.html'; return;
+      }
       buildContactModal(s);
     }).catch(function(){});
 

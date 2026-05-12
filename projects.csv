@@ -1,47 +1,27 @@
-# ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,,,
-# DENNY — SETTINGS & PROJECTS,,,,,,,,,,,,,,,,,
-# ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,,,
-#,,,,,,,,,,,,,,,,,
-# НАСТРОЙКИ САЙТА (строки вида  setting:ключ,значение),,,,,,,,,,,,,,,,
-# theme            — 1: переключатель темы виден / 2: всегда светлая / 3: всегда тёмная,,,,,,,,,,,,,,,,,
-# show_cat_filter  — true / false,,,,,,,,,,,,,,,,,
-# show_role_filter — true / false,,,,,,,,,,,,,,,,,
-# password_enabled — true / false,,,,,,,,,,,,,,,,,
-# password         — текст пароля,,,,,,,,,,,,,,,,,
-setting:theme,2,,,,,,,,,,,,,,,,
-setting:show_cat_filter,false,,,,,,,,,,,,,,,,
-setting:show_role_filter,false,,,,,,,,,,,,,,,,
-setting:password_enabled,false,,,,,,,,,,,,,,,,
-setting:password,1234,,,,,,,,,,,,,,,,
-setting:imdb,https://www.imdb.com/name/nm13145444/,,,,,,,,,,,,,,,,
-setting:linkedin,https://www.linkedin.com/in/dennyrych/,,,,,,,,,,,,,,,,
-setting:email,deniskarucha@gmail.com,,,,,,,,,,,,,,,,
-setting:card_ratio_w,3,,,,,,,,,,,,,,,,
-setting:card_ratio_h,2,,,,,,,,,,,,,,,,
-# ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,,,
-# КАК ДОБАВИТЬ ПРОЕКТ:,,,,,,,,,,,,,,,,,
-# 1. Добавь новую строку ниже строки с заголовками,,,,,,,,,,,,,,,,,
-# 2. Заполни нужные поля,,,,,,,,,,,,,,,,,
-# 3. Сохрани файл как CSV и загрузи на GitHub,,,,,,,,,,,,,,,,,
-#,,,,,,,,,,,,,,,,,
-# ПОЛЯ:,,,,,,,,,,,,,,,,,
-# title     — название проекта,,,,,,,,,,,,,,,,,
-# category  — категория: feature film / animation / 2d animation / commercial / music video,,,,,,,,,,,,,,,,,
-# featured  — главное видео (шоурил): yes (оставь пустым для остальных),,,,,,,,,,,,,,,,,
-# year      — год для отображения на карточке: 2024,,,,,,,,,,,,,,,,,
-# date      — год и месяц для сортировки: 2024-03 (если пусто — сортировка по year),,,,,,,,,,,,,,,,,
-# role      — роль: lead compositor / vfx supervisor / compositor,,,,,,,,,,,,,,,,,
-# studio    — студия или клиент (необязательно),,,,,,,,,,,,,,,,,
-# desc      — короткий текст на карточке (1-2 предложения),,,,,,,,,,,,,,,,,
-# details   — длинный текст в модалке справа (необязательно),,,,,,,,,,,,,,,,,
-# thumb     — превью картинка: thumbs/name.jpg,,,,,,,,,,,,,,,,,
-# preview   — анимация при hover: preview/name.webm (необязательно),,,,,,,,,,,,,,,,,
-# video     — основное видео: ссылка YouTube/Vimeo или video/name.webm,,,,,,,,,,,,,,,,,
-# breakdown — брейкдаун: ссылка YouTube/Vimeo или breakdown/name.webm (необязательно),,,,,,,,,,,,,,,,,
-# link      — если указан — клик открывает эту ссылку вместо модалки (необязательно),,,,,,,,,,,,,,,,,
-# page      — если указан — модалка открывает HTML страницу: pages/project.html (необязательно),,,,,,,,,,,,,,,,,
-# priority  — число 1/2/3 фиксирует позицию. Если пусто — сортировка по date/year,,,,,,,,,,,,,,,,,
-# ─────────────────────────────────────────────────────────────────────────────,,,,,,,,,,,,,,,,,
+# КАК ДОБАВИТЬ ПРОЕКТ:
+# 1. Добавь новую строку ниже строки с заголовками
+# 2. Заполни нужные поля
+# 3. Сохрани файл как CSV и загрузи на GitHub
+#
+# ПОЛЯ:
+# title     — название проекта
+# category  — категория: feature film / animation / 2d animation / commercial / music video
+# featured  — главное видео (шоурил): yes (оставь пустым для остальных)
+# year      — год для отображения на карточке: 2024
+# date      — год и месяц для сортировки: 2024-03 (если пусто — сортировка по year)
+# role      — роль: lead compositor / vfx supervisor / compositor
+# studio    — студия или клиент (необязательно)
+# desc      — короткий текст на карточке (1-2 предложения)
+# details   — длинный текст в модалке справа (необязательно)
+# thumb     — превью картинка: thumbs/name.jpg
+# preview   — анимация при hover: preview/name.webm (необязательно)
+# video     — основное видео: ссылка YouTube/Vimeo или video/name.webm
+# breakdown — брейкдаун: ссылка YouTube/Vimeo или breakdown/name.webm (необязательно)
+# link      — если указан — клик открывает эту ссылку вместо модалки (необязательно)
+# page      — если указан — модалка открывает SVG страницу: pages/project.svg (необязательно)
+# priority  — число 1/2/3 фиксирует позицию. Если пусто — сортировка по date/year
+# logo      — логотип студии: logo/name.svg или logo/name.png (необязательно)
+# award     — награда: logo/award.png (необязательно)
 title,year,date,role,studio,category,featured,desc,details,thumb,preview,video,breakdown,link,page,priority,logo,award
 Erik Stoneheart,2021,2021-06,Compositing Artist,Snow Dog,feature film,,best of 2024. compositing work across commercial and film projects.,,thumbs/erik_1k.jpg,preview/erik.webm,,,https://www.imdb.com/title/tt20247118/,,7,logo/snowdog.png,
 Kremin,2021,2021-07,Compositing Artist,Snow Dog,feature film,,"short description of the project. what you did, what was interesting.",Long description of the project. Write as much as you want here.,thumbs/kremin_1k.jpg,,,breakdown/breakdown-one.webm,https://shorturl.at/zdXR8,,,logo/snowdog.png,
