@@ -395,6 +395,38 @@
   .hero-thumb-item {
     height: 100%; aspect-ratio: 3/2; flex-shrink: 0;
     background: #222 center/cover no-repeat;
+    position: relative; overflow: hidden;
+  }
+  .hero-thumb-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.75) 100%);
+    pointer-events: none;
+  }
+  .hero-thumb-title {
+    position: absolute; bottom: 7px; left: 8px; right: 8px;
+    font-size: 13px; color: rgba(255,255,255,0.9); font-family: var(--font-headings);
+    letter-spacing: 0.02em; line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    pointer-events: none;
+  }
+  .hero-brand {
+    position: absolute; top: 24px; left: 28px; z-index: 2;
+    display: flex; align-items: center; gap: 10px; pointer-events: none;
+  }
+  .hero-brand-logo {
+    width: 28px; height: 28px; stroke: rgba(255,255,255,0.7); fill: none;
+    stroke-width: 2; stroke-linecap: round; flex-shrink: 0;
+  }
+  .hero-brand-name {
+    font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.7);
+    letter-spacing: 0.01em; font-family: var(--font-body);
+  }
+  .hero-thumb-logo {
+    position: absolute; top: 7px; right: 7px;
+    height: 13px; width: auto; max-width: 50px;
+    object-fit: contain; opacity: 0.75;
+    filter: brightness(0) invert(1);
+    pointer-events: none;
   }
 
   .hero-play-icon {
@@ -466,6 +498,12 @@
 <div id="hero-split" style="display:none">
   <div class="hero-panel hero-panel--reel" id="hero-reel-panel" onclick="openHeroReel()">
     <video id="hero-bg-video" autoplay muted loop playsinline></video>
+    <div class="hero-brand">
+      <svg class="hero-brand-logo" viewBox="0 0 40 40">
+        <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35"/>
+      </svg>
+      <span class="hero-brand-name">denny</span>
+    </div>
     <div class="hero-panel-inner">
       <div class="hero-play-icon">
         <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 21,12 6,21"/></svg>
@@ -496,10 +534,10 @@
 <div id="site">
   <header>
     <div class="site-brand">
-      <span class="site-name">denny</span>
       <svg class="site-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
         <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
       </svg>
+      <span class="site-name">denny</span>
     </div>
     <nav>
       <a href="#" id="nav-commercials" onclick="showSection('commercials');return false;" class="active">commercials</a>
@@ -564,10 +602,10 @@
 
   <footer>
     <div class="site-brand">
-      <span class="site-name">denny</span>
       <svg class="site-logo" viewBox="0 0 40 40" fill="none" stroke-width="2" stroke-linecap="round">
         <path d="M12 20C12 20 10 10 13 8C16 6 18 15 18 15M18 15C18 15 19 5 22 5C25 5 25 15 25 15M25 15C25 15 28 6 31 8C34 10 30 20 30 20M30 20C30 20 38 18 38 22C38 26 30 28 25 32C20 36 10 35 10 35" />
       </svg>
+      <span class="site-name">denny</span>
     </div>
   </footer>
 </div>
@@ -1483,7 +1521,12 @@ function populateHeroThumbs(projects) {
     row = row.slice(0, 16);
     /* duplicate for seamless loop */
     var items = row.concat(row).map(function(p) {
-      return '<div class="hero-thumb-item" style="background-image:url(\'' + p.thumb + '\')"></div>';
+      var logo = p.logo ? '<img class="hero-thumb-logo" src="' + p.logo + '" alt="">' : '';
+      var title = p.title ? '<div class="hero-thumb-title">' + p.title.trim() + '</div>' : '';
+      return '<div class="hero-thumb-item" style="background-image:url(\'' + p.thumb + '\')">'
+           + '<div class="hero-thumb-gradient"></div>'
+           + logo + title
+           + '</div>';
     }).join('');
     var dir = r % 2 === 0 ? 'hero-row--left' : 'hero-row--right';
     var spd = speeds[r % speeds.length] + 's';
